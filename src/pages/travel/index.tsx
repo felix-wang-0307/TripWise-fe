@@ -1,4 +1,4 @@
-function Login() {
+function Travel() {
   return (
     <>
       <h1>I am login page</h1>
@@ -6,4 +6,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Travel
