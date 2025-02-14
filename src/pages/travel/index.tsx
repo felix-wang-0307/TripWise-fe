@@ -1,9 +1,9 @@
-function Login() {
+function Travel() {
   return (
     <>
-      <h1>I am login page</h1>
+      <h1>I am travel page</h1>
     </>
-  )
+  );
 }
 
-export default Login
+export default Travel;
