@@ -1,12 +1,12 @@
 import { useParams } from 'react-router-dom';
 
 function Bill() {
-  const { groupid = "None" } = useParams<{ groupid: string }>();
+  const { groupId = "None" } = useParams<{ groupId: string }>();
 
   return (
     <>
       <h1>I am bill page</h1>
-      <p>Group ID: {groupid}</p>
+      <p>Group ID: {groupId}</p>
     </>
   );
 }

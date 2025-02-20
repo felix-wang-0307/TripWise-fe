@@ -18,9 +18,9 @@ const AppRouter = () => {
         <Route path="/index" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/travel" element={<Travel />} />
-        <Route path="/travel/:group_id" element={<Travel />} />
+        <Route path="/travel/:groupId" element={<Travel />} />
         <Route path="/bill" element={<Bill />} />
-        <Route path="/bill/:group_id" element={<Bill />} />
+        <Route path="/bill/:groupId" element={<Bill />} />
       </Routes>
     </Router>
   );
