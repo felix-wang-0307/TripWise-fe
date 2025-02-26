@@ -135,6 +135,11 @@ function Travel() {
   const [newDate, setNewDate] = useState("");
   const [dateInputError, setDateInputError] = useState(false);
 
+  // const { groupId = "None" } = useParams<{ groupId: string }>();
+  // 这样可以在URL中传递参数，例如：http://localhost:xxx/travel/123
+  // 然后利用groupId向后端请求数据
+  // 如有必要，需做权限校验
+
   // TODO: Need to Update Database Accordingly
   const onDeleteTrip = (date, itineraryId) => {
     const updatedItinerary = { ...itineraryList };
