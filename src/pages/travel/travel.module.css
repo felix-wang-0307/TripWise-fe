@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+.bubble {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -10px;
+    border: 3px solid white;
+    flex-shrink: 0
+}
+
+.bubbleContainer {
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    justify-content: end;
+}
