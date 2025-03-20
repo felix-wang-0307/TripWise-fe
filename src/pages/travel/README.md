@@ -1,7 +1,23 @@
+# Run
+```bash
+npm run dev
+```
+
 # To Do
 
 - Change userId, travelID
+
 - delete/add date 只要 Update travel when modify start or end date of the travel? (2.1.5)
+
+- get member fail(2.3.1 fail)
+
+- add new date fail(2.1.5 fail)
+
+- delete itinerary fail(2.1.5 fail)
+
+- add new itinerary (ok)
+
+- delete date (ok)
 
 # Fetch
 
@@ -17,7 +33,7 @@
         {
             "code": 200,
             "activity": {
-                "activityId": 123,
+                "groupId": 123,
                 "name": "3-day Trip to New York",
                 "description": "Exploring NYC with friends!",
                 "startDate": "2025-06-10",

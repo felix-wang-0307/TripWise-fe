@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Bubble from "./TravelBubble"
 import styles from "./travel.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,7 +8,6 @@ import TravelNewDate from "./TravelNewDate";
 import { TravelItinerary } from "./utils/TravelItineraryInterface";
 import { organizeItinerary } from "./utils/organizeItinerary";
 import { findInsertionId } from "./utils/findInsertionId";
-import axios from 'axios';
 
 // -------------- Test Data -------------- 
 const travel = {
@@ -125,30 +124,13 @@ const members = [
 ];
 // ----------------- End ----------------- 
 
-interface TravelData {
-  groupId: number;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  participants: number[]; // Assuming userId is a number
-}
-
-interface Member {
-  userId: string;
-  username: string;
-  role: string;
-}
 
 function Travel() {
   const MAXBUBBLES = 4;
 
-  const USER_ID = "789"; // Replace with the actual user ID, possibly from auth context
-  const TRAVEL_ID = 'travel_456'; // Replace with actual travel ID, possibly from URL params
-
-  const [travelDetail, setTravelList] = useState<TravelData | null>(null);
-  const [itineraryList, setItineraryList] = useState<{ [date: string]: TravelItinerary[] }>({});
-  const [membersList, setMembersList] = useState<Member[]>([]);
+  const [travelDetail, setTravelList] = useState(travel)
+  const [itineraryList, setItineraryList] = useState(organizeItinerary(itinerary))
+  const [membersList, setMembersList] = useState(members);
   const [showAddDate, setShowAddDate] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [dateInputError, setDateInputError] = useState(false);
@@ -158,85 +140,25 @@ function Travel() {
   // 然后利用groupId向后端请求数据
   // 如有必要，需做权限校验
 
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch Travel Details
-        const travelResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${TRAVEL_ID}?userId=${USER_ID}`);
-        setTravelList(travelResponse.data.activity);
-
-        // groupId is the same as activityId
-        const groupId = travelResponse.data.activity.activityId;
-
-        // Fetch Itinerary
-        const itineraryResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries`);
-        setItineraryList(organizeItinerary(itineraryResponse.data));
-
-
-        // Fetch Members
-        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/groups/${groupId}/members`);
-        setMembersList(groupResponse.data);
-
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [TRAVEL_ID]); // Dependency array ensures this runs only once on mount and when TRAVEL_ID changes
-
-
   // TODO: Need to Update Database Accordingly
-  const onDeleteTrip = async (date: string, itineraryId: string) => {
-    try {
-      // Call delete API
-      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries/${itineraryId}`);
-
-      // Update local state
-      const updatedItinerary = { ...itineraryList };
-      if (updatedItinerary[date]) {
-        updatedItinerary[date] = updatedItinerary[date].filter(
-          item => item.itineraryId !== itineraryId
-        );
-      }
-
-      setItineraryList(updatedItinerary);
-    } catch (error) {
-      console.error("Failed to delete trip:", error);
+  const onDeleteTrip = (date, itineraryId) => {
+    const updatedItinerary = { ...itineraryList };
+    if (updatedItinerary[date]) {
+      updatedItinerary[date] = updatedItinerary[date].filter(item => item.itineraryId !== itineraryId);
     }
+
+    setItineraryList(updatedItinerary);
   }
 
   // TODO: Need to Update Database Accordingly
-  const onDeleteDate = async (date) => {
-    try {
-      // Check if it's the start or end date
-      const isStartDate = date === travelDetail.startDate;
-      const isEndDate = date === travelDetail.endDate;
-
-      if (isStartDate || isEndDate) {
-        const updatedTravel = { ...travelDetail };
-        if (isStartDate) {
-          updatedTravel.startDate = Object.keys(itineraryList).find(d => d > date) || date;
-        }
-        if (isEndDate) {
-          updatedTravel.endDate = Object.keys(itineraryList).reverse().find(d => d < date) || date;
-        }
-        // Update travel dates using API 2.1.5
-        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}`, updatedTravel);
-        setTravelList(updatedTravel);
-      }
-      // update local state
-      const updatedItinerary = { ...itineraryList };
-      if (updatedItinerary[date]) {
-        delete updatedItinerary[date];
-      }
-
-      setItineraryList(updatedItinerary);
-    } catch (error) {
-      console.error("Failed to delete date:", error);
+  const onDeleteDate = (date) => {
+    const updatedItinerary = { ...itineraryList };
+    if (updatedItinerary[date]) {
+      delete updatedItinerary[date];
     }
-  };
+
+    setItineraryList(updatedItinerary);
+  }
 
   const onCancelAddDate = () => {
     setNewDate("");
@@ -245,70 +167,37 @@ function Travel() {
   }
 
   // TODO: Need to Update Database Accordingly
-  const onAddDate = async (date) => {
+  const onAddDate = (date) => {
     if (itineraryList[date] || date.length === 0) {
       setDateInputError(true)
       return
     }
-    try {
-      // Check if the new date is before the start date or after the end date
-      const isBeforeStart = date < travelDetail.startDate;
-      const isAfterEnd = date > travelDetail.endDate;
 
-      // Update travel dates if necessary
-      if (isBeforeStart || isAfterEnd) {
-        const updatedTravel = { ...travelDetail };
-        if (isBeforeStart) {
-          updatedTravel.startDate = date;
-        }
-        if (isAfterEnd) {
-          updatedTravel.endDate = date;
-        }
-        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}`, updatedTravel);
-        setTravelList(updatedTravel);
-      }
+    const updatedItinerary = {};
 
-      // Update local state
-      const updatedItinerary = {};
+    const sortedDates = Object.keys(itineraryList)
+    const insertionId = findInsertionId(sortedDates, date)
+    sortedDates.splice(insertionId, 0, date);
 
-      const sortedDates = Object.keys(itineraryList)
-      const insertionId = findInsertionId(sortedDates, date)
-      sortedDates.splice(insertionId, 0, date);
+    sortedDates.forEach(d => {
+      updatedItinerary[d] = itineraryList[d] || []
+    });
 
-      sortedDates.forEach(d => {
-        updatedItinerary[d] = itineraryList[d] || []
-      });
-
-      setItineraryList(updatedItinerary);
-      onCancelAddDate()
-
-    } catch (error) {
-      console.error("Failed to add date:", error);
-    }
+    setItineraryList(updatedItinerary);
+    onCancelAddDate()
   }
 
   // TODO: Need to Update Database Accordingly
-  const onAddTrip = async (trip: TravelItinerary) => {
-    try {
-      // POST new itinerary
-      const response = await axios.post(
-        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries`,
-        trip
-      );
+  const onAddTrip = (trip: TravelItinerary) => {
+    const updatedItinerary = { ...itineraryList };
 
-      // Update local state with server-generated ID
-      const newTrip = { ...trip, itineraryId: response.data.itineraryId };
-      const updatedItinerary = { ...itineraryList };
+    const sortedItinerary = updatedItinerary[trip.date]
+    const insertionId = findInsertionId(sortedItinerary, trip, item => item.time)
+    sortedItinerary.splice(insertionId, 0, trip);
 
-      const sortedItinerary = updatedItinerary[trip.date] || [];
-      const insertionId = findInsertionId(sortedItinerary, newTrip, item => item.time);
-      sortedItinerary.splice(insertionId, 0, newTrip);
+    updatedItinerary[trip.date] = sortedItinerary
 
-      updatedItinerary[trip.date] = sortedItinerary;
-      setItineraryList(updatedItinerary);
-    } catch (error) {
-      console.error("Failed to add trip:", error);
-    }
+    setItineraryList(updatedItinerary);
   }
 
   return (
