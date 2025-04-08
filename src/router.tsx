@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import HomePage from "./pages/homepage";
+import HomePage from "./pages/homepage/homepage.tsx";
 import Login from "./pages/login";
 import Travel from "./pages/travel";
 import Bill from "./pages/bill";

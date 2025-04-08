@@ -73,23 +73,28 @@ const HomePage: React.FC = () => {
 
   // 检查表单是否有效 (验证函数)
   const validateForm = () => {
-    const errors = { ...formErrors };
+    const errors = { ...emptyFormErrors };
     if (showCreateForm) {
       if (!newActivityName) errors.name = "Activity name is required.";
       if (!newActivityDescription) errors.description = "Description is required.";
       if (!newActivityStartDate) errors.startDate = "Start date is required.";
       if (!newActivityEndDate) errors.endDate = "End date is required.";
+      else if (newActivityStartDate && newActivityEndDate < newActivityStartDate) {
+        errors.endDate = "End date must be later than start date.";
+      }
     }
 
-    // 通过活动 ID 加入的验证
     if (showJoinForm) {
       if (!activityId) errors.activityId = "Activity ID is required.";
     }
 
-    console.log("Validation Errors:", errors); // 调试用，打印验证错误
+    console.log("Validation Errors:", errors);
 
     setFormErrors(errors);
-    return Object.keys(errors).length === 0; // 如果没有错误，返回 true
+
+    // ✅ 正确判断有没有任何错误值
+    const hasError = Object.values(errors).some(error => error !== "");
+    return !hasError;
   };
 
 
@@ -162,9 +167,22 @@ const HomePage: React.FC = () => {
         !formRef.current?.contains(target) &&
         !addBtnRef.current?.contains(target)
       ) {
-        setShowOptions(false);
         setShowCreateForm(false);
         setShowJoinForm(false);
+        setShowOptions(false);
+        setActivityId("");
+        setNewActivityName("");
+        setNewActivityDescription("");
+        setNewActivityStartDate("");
+        setNewActivityEndDate("");
+        setFormErrors({
+          name: "",
+          description: "",
+          startDate: "",
+          endDate: "",
+          activityId: ""
+        });
+        setFormErrorMessage("");
       }
     };
 
