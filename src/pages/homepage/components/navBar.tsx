@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
     const [showMenu, setShowMenu] = useState(false);
     // 处理登出逻辑
     const handleLogout = () => {
-        console.log("User logged out"); // TODOl: 这里可以添加清除 Cookie 和跳转到登录页的逻辑
+        console.log("User logged out"); // TODO: 这里可以添加清除 Cookie 和跳转到登录页的逻辑
         alert("Logged out!");
     };
 
@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
 
 
 
-                {/* User Info & dropdown */}
+                {/* TODO: User Info & dropdown */}
                 <Dropdown align="end" show={showMenu} onToggle={(isOpen) => setShowMenu(isOpen)}>
                     <Dropdown.Toggle
                         as="div"
