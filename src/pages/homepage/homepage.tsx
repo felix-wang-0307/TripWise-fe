@@ -19,6 +19,9 @@ interface Activity {
 const HomePage: React.FC = () => {
 
   const userId = "3";  // TODO: userId 后续从 Cookie 读取
+  // const [userId, setUserId] = useState<string>("");
+
+
 
   // const [activities, setActivities] = useState(mockActivities);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -125,7 +128,8 @@ const HomePage: React.FC = () => {
 
 
   // for fetching all activities of user from the server when the page loads
-  useEffect(() => {
+  useEffect(() => { // TODO: 这里的 userId 需要从 Cookie 中读取
+    // if (!userId) return; // 如果没有 userId，则不执行 fetchActivities
     const fetchActivities = async () => {
       try {
         const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
@@ -137,12 +141,10 @@ const HomePage: React.FC = () => {
           }
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
         console.log("Fetched activities:", data.activities);
         console.log("Setting activities to:", data.activities);
         setActivities(data.activities || []);
-
       } catch (error) {
         console.error("Error fetching activities:", error);
       } finally {
@@ -152,6 +154,7 @@ const HomePage: React.FC = () => {
 
     fetchActivities();
   }, []);
+  // }, [userId]);
 
 
 
@@ -450,7 +453,7 @@ const HomePage: React.FC = () => {
   return (
     <div>
       <Navbar />
-
+      {/* <Navbar onUserIdLoaded={setUserId} /> */}
 
       {/* Tabs */}
       <div className="container mt-4">

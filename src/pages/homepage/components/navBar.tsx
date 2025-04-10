@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// interface NavbarProps {
+//   onUserIdLoaded?: (userId: string) => void;
+// }
+
+
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const token = Cookies.get("authToken");
