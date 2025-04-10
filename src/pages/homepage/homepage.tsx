@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/travels/users/${userId}`);
+        const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
         if (!response.ok) {
           if (response.status === 404) {
             console.log("User has no activities");
@@ -321,7 +321,7 @@ const HomePage: React.FC = () => {
       setFormErrorMessage("");
       try {
         const response = await fetch(
-          `http://localhost:8080/api/travels/activities/${activityId}?userId=${userId}`
+          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${userId}`
         );
 
         if (response.status === 200) {
@@ -360,7 +360,7 @@ const HomePage: React.FC = () => {
       setIsLoading(true);
       setFormErrorMessage("");
       try {
-        const response = await fetch("http://localhost:8080/api/travels", {
+        const response = await fetch("http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -401,7 +401,7 @@ const HomePage: React.FC = () => {
   // Fetch activities from the server after add the new activity
   const fetchActivities = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/travels/users/${userId}`);
+      const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setActivities(data.activities || []);
@@ -419,7 +419,7 @@ const HomePage: React.FC = () => {
     console.log("Deleting activity with ID:", activityId); // 检查 activityId 是否正确
     try {
       const response = await fetch(
-        `http://localhost:8080/api/travels/activities/${activityId}/users/${userId}`,
+        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}/users/${userId}`,
         {
           method: "DELETE"
         }
