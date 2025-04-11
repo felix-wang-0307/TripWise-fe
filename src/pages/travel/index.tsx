@@ -8,6 +8,7 @@ import TravelNewDate from "./TravelNewDate";
 import { TravelItinerary } from "./utils/TravelItineraryInterface";
 import { organizeItinerary } from "./utils/organizeItinerary";
 import { findInsertionId } from "./utils/findInsertionId";
+import { useParams, useSearchParams } from "react-router-dom";
 import axios from 'axios';
 
 interface TravelData {
@@ -28,9 +29,10 @@ interface Member {
 function Travel() {
   const MAXBUBBLES = 4;
 
-  // now use 3
-  const USER_ID = "3";    // need replace
-  const TRAVEL_ID = '2';  // need replace
+  // expect /travel/${activity.groupId}?userId=${userId})
+  const { TRAVEL_ID } = useParams();  // Get `activityId` from the path
+  const [searchParams] = useSearchParams();
+  const USER_ID = searchParams.get("userId");
 
   const [travelDetail, setTravelList] = useState<TravelData | null>(null);
   const [itineraryList, setItineraryList] = useState<{ [date: string]: TravelItinerary[] }>({});
