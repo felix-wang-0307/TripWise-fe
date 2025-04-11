@@ -18,8 +18,8 @@ interface Activity {
 
 const HomePage: React.FC = () => {
 
-  const userId = "3";  // TODO: userId 后续从 Cookie 读取
-  // const [userId, setUserId] = useState<string>(""); // TODO: userId 后续从 Cookie 读取
+  const userId = "3";  // TODO: hardcode userId for testing
+  // const [userId, setUserId] = useState<string | null>(null);// TODO:
 
 
   // const [activities, setActivities] = useState(mockActivities);
@@ -463,7 +463,7 @@ const HomePage: React.FC = () => {
   return (
     <div>
       <Navbar />
-      {/* <Navbar onUserIdLoaded={setUserId} /> */}      {/* <Navbar onUserIdLoaded={setUserId} /> */}
+      {/* <Navbar onUserIdLoaded={setUserId} /> */}
 
       {/* Tabs */}
       <div className="container mt-4">
