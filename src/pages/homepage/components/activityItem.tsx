@@ -12,16 +12,26 @@ interface Activity {
 interface Props {
     activity: Activity;
     onDelete: (groupId: number) => void;
+    userId: string;
 }
 
-const ActivityItem: React.FC<Props> = ({ activity, onDelete }) => {
+const ActivityItem: React.FC<Props> = ({ activity, onDelete, userId }) => {
     const [isHovered, setIsHovered] = useState(false);
 
-    const handleDeleteClick = () => {
+
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // 防止冒泡触发整个卡片的 onClick
         if (window.confirm(`Are you sure you want to delete "${activity.name}"?`)) {
             onDelete(activity.groupId);
         }
     };
+
+    const handleCardClick = () => {
+        // TODO: 实现跳转逻辑
+        console.log("Card clicked! userId:", userId, "activityId:", activity.groupId);
+        alert(`userId: ${userId}, activityId: ${activity.groupId}`); // TODO: FOR TEST
+    };
+
 
     return (
         <div
@@ -38,6 +48,7 @@ const ActivityItem: React.FC<Props> = ({ activity, onDelete }) => {
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={handleCardClick}
         >
             <h4 style={{ marginBottom: "5px", color: "#084a86" }}>{activity.name}</h4>
             <p style={{ fontSize: "12px", color: "#888" }}>

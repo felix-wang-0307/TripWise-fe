@@ -13,9 +13,10 @@ interface Activity {
 interface Props {
     activities: Activity[];
     onDeleteActivity: (groupId: number) => void; // 新增删除活动的回调函数
+    userId: string;
 }
 
-const ActivityList: React.FC<Props> = ({ activities, onDeleteActivity }) => {
+const ActivityList: React.FC<Props> = ({ activities, onDeleteActivity, userId }) => {
     // 按日期排序活动列表，最近的日期排在最上面
     const sortedActivities = activities.sort((a, b) => {
         const dateA = new Date(a.startDate).getTime();
@@ -48,6 +49,7 @@ const ActivityList: React.FC<Props> = ({ activities, onDeleteActivity }) => {
                             key={activity.groupId}
                             activity={activity}
                             onDelete={onDeleteActivity}
+                            userId={userId}
                         />
                     ))}
                 </div>
