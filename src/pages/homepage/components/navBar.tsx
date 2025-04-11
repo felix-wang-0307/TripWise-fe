@@ -67,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
         mode: "cors",
       });
 
-      const data = await response.json();
+      //const data = await response.json();
       setmsgvis(true);
 
       if (response.status === 200) {
@@ -219,7 +219,7 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
         mode: "cors",
       });
 
-      const data = await response.json();
+      //const data = await response.json();
 
       if (response.status === 200) {
         Cookies.remove("authToken");
