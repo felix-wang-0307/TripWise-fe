@@ -19,8 +19,7 @@ interface Activity {
 const HomePage: React.FC = () => {
 
   const userId = "3";  // TODO: userId 后续从 Cookie 读取
-  // const [userId, setUserId] = useState<string>("");
-
+  // const [userId, setUserId] = useState<string>(""); // TODO: userId 后续从 Cookie 读取
 
 
   // const [activities, setActivities] = useState(mockActivities);
@@ -129,7 +128,7 @@ const HomePage: React.FC = () => {
 
   // for fetching all activities of user from the server when the page loads
   useEffect(() => { // TODO: 这里的 userId 需要从 Cookie 中读取
-    // if (!userId) return; // 如果没有 userId，则不执行 fetchActivities
+    if (!userId) return; // 如果没有 userId，则不执行 fetchActivities
     const fetchActivities = async () => {
       try {
         const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
@@ -153,8 +152,7 @@ const HomePage: React.FC = () => {
     };
 
     fetchActivities();
-  }, []);
-  // }, [userId]);
+  }, [userId]);
 
 
 
@@ -319,6 +317,10 @@ const HomePage: React.FC = () => {
 
 
   const handleJoinById = async () => {
+    if (!userId) {
+      setFormErrorMessage("User ID not found. Please log in again.");
+      return;
+    }
     if (validateForm()) {
       setIsLoading(true);
       setFormErrorMessage("");
@@ -359,6 +361,10 @@ const HomePage: React.FC = () => {
 
 
   const handleCreateNewActivity = async () => {
+    if (!userId) {
+      setFormErrorMessage("User ID not found. Please log in again.");
+      return;
+    }
     if (validateForm()) {
       setIsLoading(true);
       setFormErrorMessage("");
@@ -419,6 +425,10 @@ const HomePage: React.FC = () => {
 
   //################
   const handleDeleteActivity = async (activityId: number) => { // Todo: Fail to delete activity
+    if (!userId) {
+      alert("User ID not found. Please log in again.");
+      return;
+    }
     console.log("Deleting activity with ID:", activityId); // 检查 activityId 是否正确
     try {
       const response = await fetch(
@@ -453,7 +463,7 @@ const HomePage: React.FC = () => {
   return (
     <div>
       <Navbar />
-      {/* <Navbar onUserIdLoaded={setUserId} /> */}
+      {/* <Navbar onUserIdLoaded={setUserId} /> */}      {/* <Navbar onUserIdLoaded={setUserId} /> */}
 
       {/* Tabs */}
       <div className="container mt-4">
@@ -491,6 +501,7 @@ const HomePage: React.FC = () => {
                 <ActivityList
                   activities={ongoingActivities}
                   onDeleteActivity={handleDeleteActivity}
+                  userId={userId}
                 />
 
 
@@ -630,6 +641,7 @@ const HomePage: React.FC = () => {
               <ActivityList
                 activities={completedActivities}
                 onDeleteActivity={handleDeleteActivity}
+                userId={userId}
               />
             )}
           </div>
