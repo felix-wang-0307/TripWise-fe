@@ -30,7 +30,7 @@ function Travel() {
   const MAXBUBBLES = 4;
 
   // expect /travel/${activity.groupId}?userId=${userId})
-  const { TRAVEL_ID } = useParams();  // Get `activityId` from the path
+  const { activityId } = useParams();  // Get `activityId` from the path
   const [searchParams] = useSearchParams();
   const USER_ID = searchParams.get("userId");
 
@@ -42,18 +42,11 @@ function Travel() {
   const [dateInputError, setDateInputError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-
-  // const { groupId = "None" } = useParams<{ groupId: string }>();
-  // 这样可以在URL中传递参数，例如：http://localhost:xxx/travel/123
-  // 然后利用groupId向后端请求数据
-  // 如有必要，需做权限校验
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch Travel Details
-        const travelResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${TRAVEL_ID}?userId=${USER_ID}`);
+        const travelResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
         setTravelList(travelResponse.data.activity);
         console.log("Travel Detail:", travelResponse.data.activity);
 
@@ -61,9 +54,8 @@ function Travel() {
         const groupId = travelResponse.data.activity.groupId;
 
         // Fetch Itinerary
-        const itineraryResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries`);
+        const itineraryResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`);
         setItineraryList(organizeItinerary(itineraryResponse.data));
-
 
         // Fetch Members
         const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/groups/${groupId}/members`);
@@ -77,14 +69,14 @@ function Travel() {
     };
 
     fetchData();
-  }, [TRAVEL_ID]); // Dependency array ensures this runs only once on mount and when TRAVEL_ID changes
+  }, [activityId]); // Dependency array ensures this runs only once on mount and when TRAVEL_ID changes
 
 
   // TODO: Need to Update Database Accordingly
   const onDeleteTrip = async (date: string, itineraryId: string) => {
     try {
       // Call delete API
-      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries/${itineraryId}`);
+      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries/${itineraryId}`);
 
       // Update local state
       const updatedItinerary = { ...itineraryList };
@@ -116,7 +108,7 @@ function Travel() {
           updatedTravel.endDate = Object.keys(itineraryList).reverse().find(d => d < date) || date;
         }
         // Update travel dates using API 2.1.5
-        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}`, updatedTravel);
+        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
         setTravelList(updatedTravel);
       }
       // update local state
@@ -157,7 +149,7 @@ function Travel() {
         if (isAfterEnd) {
           updatedTravel.endDate = date;
         }
-        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}`, updatedTravel);
+        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
         setTravelList(updatedTravel);
       }
 
@@ -185,7 +177,7 @@ function Travel() {
     try {
       // POST new itinerary
       const response = await axios.post(
-        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${TRAVEL_ID}/itineraries`,
+        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`,
         trip
       );
 
