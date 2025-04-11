@@ -30,7 +30,9 @@ const ActivityItem: React.FC<Props> = ({ activity, onDelete, userId }) => {
 
     const handleCardClick = () => {
         console.log("Card clicked! userId:", userId, "activityId:", activity.groupId);
-        navigate(`/travel/${activity.groupId}`);
+        // navigate(`/travel/${activity.groupId}`);
+        navigate(`/travel/${activity.groupId}?userId=${userId}`);
+
     };
 
 
