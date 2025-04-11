@@ -90,7 +90,7 @@ function Signup() {
         securityQuestion: prob,
         securityAnswer: answer,
       };
-      console.log("Request Body:", requestBody);
+      //console.log("Request Body:", requestBody);
       const response = await fetch(`${APIURL}/api/auth/register`, {
         method: "POST",
         headers: {
@@ -101,7 +101,7 @@ function Signup() {
       });
 
       const data = await response.json();
-      console.log("Response received:", data);
+      //console.log("Response received:", data);
       switch (response.status) {
         case 201:
           setModalMessage(

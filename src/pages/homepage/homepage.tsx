@@ -5,8 +5,6 @@ import Loading from "./components/loading.tsx";
 // import { mockActivities } from "./mock/mockActivities.ts";
 import "./homepage.css";
 
-
-
 interface Activity {
   groupId: number;
   name: string;
@@ -17,11 +15,9 @@ interface Activity {
 }
 
 const HomePage: React.FC = () => {
-
-  const userId = "3";  // TODO: hardcode userId for testing
-  // const [userId, setUserId] = useState<string | null>(null);// TODO:
-
-
+  //const userId = "3";  // TODO: hardcode userId for testing
+  const [userId, setUserId] = useState("");
+  const APIURL = import.meta.env.VITE_APIURL;
   // const [activities, setActivities] = useState(mockActivities);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [activeTab, setActiveTab] = useState("ongoing");
@@ -45,9 +41,12 @@ const HomePage: React.FC = () => {
   // get today's date in ISO format (YYYY-MM-DD)
   const today = new Date().toISOString().split("T")[0];
   // classify activities into ongoing and completed
-  const ongoingActivities = activities.filter((activity) => activity?.endDate && activity.endDate >= today);
-  const completedActivities = activities.filter((activity) => activity?.endDate && activity.endDate < today);
-
+  const ongoingActivities = activities.filter(
+    (activity) => activity?.endDate && activity.endDate >= today
+  );
+  const completedActivities = activities.filter(
+    (activity) => activity?.endDate && activity.endDate < today
+  );
 
   const optionsRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
@@ -61,27 +60,30 @@ const HomePage: React.FC = () => {
     }, 80); // Adding a delay to ensure rendering is complete
   };
 
-
   const emptyFormErrors = {
     name: "",
     description: "",
     startDate: "",
     endDate: "",
-    activityId: ""
+    activityId: "",
   };
   // 设置 formErrors 状态，使用默认空对象作为初始值
-  const [formErrors, setFormErrors] = useState<typeof emptyFormErrors>(emptyFormErrors);
-
+  const [formErrors, setFormErrors] =
+    useState<typeof emptyFormErrors>(emptyFormErrors);
 
   // 检查表单是否有效 (验证函数)
   const validateForm = () => {
     const errors = { ...emptyFormErrors };
     if (showCreateForm) {
       if (!newActivityName) errors.name = "Activity name is required.";
-      if (!newActivityDescription) errors.description = "Description is required.";
+      if (!newActivityDescription)
+        errors.description = "Description is required.";
       if (!newActivityStartDate) errors.startDate = "Start date is required.";
       if (!newActivityEndDate) errors.endDate = "End date is required.";
-      else if (newActivityStartDate && newActivityEndDate < newActivityStartDate) {
+      else if (
+        newActivityStartDate &&
+        newActivityEndDate < newActivityStartDate
+      ) {
         errors.endDate = "End date must be later than start date.";
       }
     }
@@ -95,12 +97,9 @@ const HomePage: React.FC = () => {
     setFormErrors(errors);
 
     // ✅ 正确判断有没有任何错误值
-    const hasError = Object.values(errors).some(error => error !== "");
+    const hasError = Object.values(errors).some((error) => error !== "");
     return !hasError;
   };
-
-
-
 
   // ------------------------------useEffect------------------------------
   // When the options menu is shown, scroll to the bottom
@@ -124,14 +123,13 @@ const HomePage: React.FC = () => {
     }
   }, [showJoinForm]);
 
-
-
   // for fetching all activities of user from the server when the page loads
-  useEffect(() => { // TODO: 这里的 userId 需要从 Cookie 中读取
+  useEffect(() => {
+    // TODO: 这里的 userId 需要从 Cookie 中读取
     if (!userId) return; // 如果没有 userId，则不执行 fetchActivities
     const fetchActivities = async () => {
       try {
-        const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
+        const response = await fetch(`${APIURL}/api/travels/users/${userId}`);
         if (!response.ok) {
           if (response.status === 404) {
             console.log("User has no activities");
@@ -153,8 +151,6 @@ const HomePage: React.FC = () => {
 
     fetchActivities();
   }, [userId]);
-
-
 
   // useEffect to handle all outside clicks
   // useEffect to handle all outside clicks
@@ -181,7 +177,7 @@ const HomePage: React.FC = () => {
           description: "",
           startDate: "",
           endDate: "",
-          activityId: ""
+          activityId: "",
         });
         setFormErrorMessage("");
       }
@@ -192,13 +188,6 @@ const HomePage: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-
-
-
-
-
-
 
   // ------------------------------handle functions------------------------------
 
@@ -217,7 +206,6 @@ const HomePage: React.FC = () => {
     setNewActivityStartDate("");
     setNewActivityEndDate("");
   };
-
 
   // open create activity form
   const handleCreateActivity = () => {
@@ -258,7 +246,7 @@ const HomePage: React.FC = () => {
       description: "",
       startDate: "",
       endDate: "",
-      activityId: ""
+      activityId: "",
     });
     setFormErrorMessage("");
   };
@@ -285,7 +273,10 @@ const HomePage: React.FC = () => {
       setFormErrors((prev) => ({ ...prev, startDate: "" }));
       // 检查 End Date 是否比 Start Date 小
       if (newActivityEndDate && newActivityEndDate < startDate) {
-        setFormErrors((prev) => ({ ...prev, endDate: "End date must be later than start date." }));
+        setFormErrors((prev) => ({
+          ...prev,
+          endDate: "End date must be later than start date.",
+        }));
       } else {
         setFormErrors((prev) => ({ ...prev, endDate: "" }));
       }
@@ -298,7 +289,10 @@ const HomePage: React.FC = () => {
     // 清除错误提示 (End Date)
     if (endDate) {
       if (newActivityStartDate && endDate < newActivityStartDate) {
-        setFormErrors((prev) => ({ ...prev, endDate: "End date must be later than start date." }));
+        setFormErrors((prev) => ({
+          ...prev,
+          endDate: "End date must be later than start date.",
+        }));
       } else {
         setFormErrors((prev) => ({ ...prev, endDate: "" }));
       }
@@ -314,8 +308,6 @@ const HomePage: React.FC = () => {
     }
   };
 
-
-
   const handleJoinById = async () => {
     if (!userId) {
       setFormErrorMessage("User ID not found. Please log in again.");
@@ -326,14 +318,16 @@ const HomePage: React.FC = () => {
       setFormErrorMessage("");
       try {
         const response = await fetch(
-          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${userId}`
+          `${APIURL}/api/travels/activities/${activityId}?userId=${userId}`
         );
 
         if (response.status === 200) {
           const data = await response.json();
 
           // 检查用户是否已经在活动中
-          const isAlreadyJoined = data.activity.participants.includes(parseInt(userId, 10));
+          const isAlreadyJoined = data.activity.participants.includes(
+            parseInt(userId, 10)
+          );
           if (isAlreadyJoined) {
             setFormErrorMessage("Already joined this activity.");
           } else {
@@ -345,20 +339,20 @@ const HomePage: React.FC = () => {
         } else if (response.status === 404) {
           setFormErrorMessage("Activity does not exist.");
         } else {
-          setFormErrorMessage("An unexpected error occurred. Please try again.");
+          setFormErrorMessage(
+            "An unexpected error occurred. Please try again."
+          );
         }
       } catch (error) {
         console.error("Error joining activity by ID:", error);
-        setFormErrorMessage("Unable to connect to the server. Please try again.");
+        setFormErrorMessage(
+          "Unable to connect to the server. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }
     }
   };
-
-
-
-
 
   const handleCreateNewActivity = async () => {
     if (!userId) {
@@ -369,7 +363,7 @@ const HomePage: React.FC = () => {
       setIsLoading(true);
       setFormErrorMessage("");
       try {
-        const response = await fetch("http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels", {
+        const response = await fetch(`${APIURL}/api/travels`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -395,22 +389,25 @@ const HomePage: React.FC = () => {
         } else {
           // failed to create activity
           const errorData = await response.json();
-          setFormErrorMessage(errorData.error || "Failed to create activity. Please try again.");
+          setFormErrorMessage(
+            errorData.error || "Failed to create activity. Please try again."
+          );
         }
       } catch (error) {
         console.error("Error creating activity:", error);
-        setFormErrorMessage("An error occurred while creating the activity. Please try again.");
+        setFormErrorMessage(
+          "An error occurred while creating the activity. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-
   // Fetch activities from the server after add the new activity
   const fetchActivities = async () => {
     try {
-      const response = await fetch(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/users/${userId}`);
+      const response = await fetch(`${APIURL}/api/travels/users/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setActivities(data.activities || []);
@@ -422,9 +419,9 @@ const HomePage: React.FC = () => {
     }
   };
 
-
   //################
-  const handleDeleteActivity = async (activityId: number) => { // Todo: Fail to delete activity
+  const handleDeleteActivity = async (activityId: number) => {
+    // Todo: Fail to delete activity
     if (!userId) {
       alert("User ID not found. Please log in again.");
       return;
@@ -432,11 +429,10 @@ const HomePage: React.FC = () => {
     console.log("Deleting activity with ID:", activityId); // 检查 activityId 是否正确
     try {
       const response = await fetch(
-        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}/users/${userId}`,
+        `${APIURL}/api/travels/activities/${activityId}/users/${userId}`,
         {
-          method: "DELETE"
+          method: "DELETE",
         }
-
       );
       if (response.ok) {
         alert("Activity deleted successfully.");
@@ -451,18 +447,9 @@ const HomePage: React.FC = () => {
     }
   };
 
-
-
-
-
-
-
-
-
-
   return (
     <div>
-      <Navbar />
+      <Navbar onUserIdLoaded={setUserId} />
       {/* <Navbar onUserIdLoaded={setUserId} /> */}
 
       {/* Tabs */}
@@ -479,15 +466,15 @@ const HomePage: React.FC = () => {
           </li>
           <li className="nav-item">
             <button
-              className={`nav-link ${activeTab === "completed" ? "active" : ""}`}
+              className={`nav-link ${
+                activeTab === "completed" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("completed")}
             >
               Completed
             </button>
           </li>
         </ul>
-
-
 
         {/* Tab Content */}
         {/* Loading */}
@@ -504,8 +491,6 @@ const HomePage: React.FC = () => {
                   userId={userId}
                 />
 
-
-
                 {/* + button, only show in ongoing tab */}
                 <div className="d-flex justify-content-center mt-3">
                   <button
@@ -517,12 +502,13 @@ const HomePage: React.FC = () => {
                   </button>
                 </div>
 
-
-
                 {/* option menu */}
                 {showOptions && (
                   <div className="options-menu" ref={optionsRef}>
-                    <button className="option-btn" onClick={handleCreateActivity}>
+                    <button
+                      className="option-btn"
+                      onClick={handleCreateActivity}
+                    >
                       Create New Activity
                     </button>
                     <button className="option-btn" onClick={handleJoinActivity}>
@@ -531,12 +517,12 @@ const HomePage: React.FC = () => {
                   </div>
                 )}
 
-
-
                 {/* Create Form */}
                 {showCreateForm && (
                   <div className="form-container" ref={formRef}>
-                    <button className="close-btn" onClick={handleCloseForms}>✖</button>
+                    <button className="close-btn" onClick={handleCloseForms}>
+                      ✖
+                    </button>
                     <div className="form-header">
                       <h3>Create New Activity</h3>
                     </div>
@@ -548,7 +534,9 @@ const HomePage: React.FC = () => {
                       onChange={handleNameChange}
                       className={formErrors.name ? "input-error" : ""}
                     />
-                    {formErrors.name && <span className="error-text">{formErrors.name}</span>}
+                    {formErrors.name && (
+                      <span className="error-text">{formErrors.name}</span>
+                    )}
 
                     <input
                       type="text"
@@ -557,7 +545,11 @@ const HomePage: React.FC = () => {
                       onChange={handleDescriptionChange}
                       className={formErrors.description ? "input-error" : ""}
                     />
-                    {formErrors.description && <span className="error-text">{formErrors.description}</span>}
+                    {formErrors.description && (
+                      <span className="error-text">
+                        {formErrors.description}
+                      </span>
+                    )}
 
                     {/* Start Date Input */}
                     <input
@@ -567,7 +559,9 @@ const HomePage: React.FC = () => {
                       onChange={handleStartDateChange}
                       className={formErrors.startDate ? "input-error" : ""}
                     />
-                    {formErrors.startDate && <span className="error-text">{formErrors.startDate}</span>}
+                    {formErrors.startDate && (
+                      <span className="error-text">{formErrors.startDate}</span>
+                    )}
 
                     {/* End Date Input with validation */}
                     <input
@@ -578,10 +572,16 @@ const HomePage: React.FC = () => {
                       className={formErrors.endDate ? "input-error" : ""}
                       min={newActivityStartDate || ""} // 设置最小值为 Start Date
                     />
-                    {formErrors.endDate && <span className="error-text">{formErrors.endDate}</span>}
+                    {formErrors.endDate && (
+                      <span className="error-text">{formErrors.endDate}</span>
+                    )}
 
                     <div className="button-group">
-                      <button className="create-btn" onClick={handleCreateNewActivity} disabled={isLoading}>
+                      <button
+                        className="create-btn"
+                        onClick={handleCreateNewActivity}
+                        disabled={isLoading}
+                      >
                         {isLoading ? "Creating..." : "Create"}
                       </button>
 
@@ -590,16 +590,20 @@ const HomePage: React.FC = () => {
                       </button>
                     </div>
                     {/* ❌ backend error */}
-                    {formErrorMessage && <span className="error-text form-error">{formErrorMessage}</span>}
+                    {formErrorMessage && (
+                      <span className="error-text form-error">
+                        {formErrorMessage}
+                      </span>
+                    )}
                   </div>
                 )}
-
-
 
                 {/* Join Form */}
                 {showJoinForm && (
                   <div className="form-container" ref={formRef}>
-                    <button className="close-btn" onClick={handleCloseForms}>✖</button>
+                    <button className="close-btn" onClick={handleCloseForms}>
+                      ✖
+                    </button>
                     <div className="form-header">
                       <h3>Join Activity by ID</h3>
                     </div>
@@ -611,10 +615,18 @@ const HomePage: React.FC = () => {
                       onChange={handleActivityIdChange}
                       className={formErrors.activityId ? "input-error" : ""}
                     />
-                    {formErrors.activityId && <span className="error-text">{formErrors.activityId}</span>}
+                    {formErrors.activityId && (
+                      <span className="error-text">
+                        {formErrors.activityId}
+                      </span>
+                    )}
 
                     <div className="button-group">
-                      <button className="join-btn" onClick={handleJoinById} disabled={isLoading}>
+                      <button
+                        className="join-btn"
+                        onClick={handleJoinById}
+                        disabled={isLoading}
+                      >
                         {isLoading ? "Joining..." : "Join"}
                       </button>
                       <button className="clear-btn" onClick={handleClearForm}>
@@ -625,17 +637,17 @@ const HomePage: React.FC = () => {
                     {/* ❌ backend error */}
                     {formErrorMessage && (
                       <span
-                        className={`error-text form-error ${formErrorMessage === "Already joined this activity." ? "text-success" : "text-danger"
-                          }`}
+                        className={`error-text form-error ${
+                          formErrorMessage === "Already joined this activity."
+                            ? "text-success"
+                            : "text-danger"
+                        }`}
                       >
                         {formErrorMessage}
                       </span>
                     )}
                   </div>
                 )}
-
-
-
               </>
             ) : (
               <ActivityList
@@ -647,8 +659,6 @@ const HomePage: React.FC = () => {
           </div>
         )}
         <div ref={scrollRef}></div>
-
-
       </div>
     </div>
   );

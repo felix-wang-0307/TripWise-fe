@@ -4,13 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// interface NavbarProps {
-//   onUserIdLoaded?: (userId: string) => void;
-// }
+interface NavbarProps {
+  onUserIdLoaded?: (userId: string) => void;
+}
 
-
-
-const Navbar: React.FC = () => {
+const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
   const navigate = useNavigate();
   const token = Cookies.get("authToken");
   const APIURL = import.meta.env.VITE_APIURL;
@@ -49,7 +47,7 @@ const Navbar: React.FC = () => {
   };
   function backtologin() {
     Cookies.remove("authToken");
-    console.log("resetpw cookie still exist?", Cookies.get("authToken"));
+    //console.log("resetpw cookie still exist?", Cookies.get("authToken"));
     setTimeout(() => navigate("/login"), 1500);
   }
   const senddpreq = async () => {
@@ -127,22 +125,22 @@ const Navbar: React.FC = () => {
       );
 
       const data = await response.json();
-      console.log("Response received for resetpw-2:", data);
+      //console.log("Response received for resetpw-2:", data);
       if (response.status == 200) {
         setResetpw3(true);
         setResetpw2(false);
-        console.log(data.passwordResetToken);
+        //console.log(data.passwordResetToken);
         setresetToken(data.passwordResetToken);
       } else {
-        console.log("fail to request for resetpw2");
+        //console.log("fail to request for resetpw2");
       }
     } catch (err) {
-      console.error("Error:", err);
+      //console.error("Error:", err);
     }
   };
   const Resetpw = async () => {
-    console.log("sending req to reset password1:usedID:", userId);
-    console.log("token", token);
+    //console.log("sending req to reset password1:usedID:", userId);
+    //console.log("token", token);
     try {
       const response = await fetch(
         `${APIURL}/api/auth/reset-password-1`,
@@ -158,21 +156,21 @@ const Navbar: React.FC = () => {
       );
 
       const data = await response.json();
-      console.log("Response received for resetpw-1:", data);
+      //console.log("Response received for resetpw-1:", data);
       if (response.status == 200) {
         setResetpw2(true);
         setResetpwsee(false);
         console.log(data.securityQuestion);
         setReset1rep(data.securityQuestion);
       } else {
-        console.log("fail to request for resetpw");
+        //console.log("fail to request for resetpw");
       }
     } catch (err) {
-      console.error("Error:", err);
+      //console.error("Error:", err);
     }
   };
   const sendresetReq = async () => {
-    console.log("sending req to reset password3");
+    //console.log("sending req to reset password3");
     try {
       const response = await fetch(
         `${APIURL}/api/auth/reset-password-3`,
@@ -193,7 +191,7 @@ const Navbar: React.FC = () => {
       );
 
       const data = await response.json();
-      console.log("Response received for resetpw-3:", data);
+      //console.log("Response received for resetpw-3:", data);
 
       if (response.status == 200) {
         setReset2rep("update successfully");
@@ -204,7 +202,7 @@ const Navbar: React.FC = () => {
       } else {
         setReset2rep("reset failed");
         setTimeout(() => setReset2rep(""), 3000);
-        console.log("fail to request for resetpw-3");
+        //console.log("fail to request for resetpw-3");
       }
     } catch (err) {
       console.error("Error:", err);
@@ -226,6 +224,7 @@ const Navbar: React.FC = () => {
       if (response.status === 200) {
         Cookies.remove("authToken");
         setUserId("");
+        onUserIdLoaded("");
         setUsername("");
         setDPname("");
         navigate("/login");
@@ -259,6 +258,7 @@ const Navbar: React.FC = () => {
 
         if (response.status === 200) {
           setUserId(data.userId);
+          onUserIdLoaded(data.userId);
           setUsername(data.username);
           setDPname(data.displayName);
           setemail(data.email);
