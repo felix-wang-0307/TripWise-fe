@@ -372,9 +372,6 @@ const HomePage: React.FC = () => {
   //           const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
   //           if (refreshed.ok) {
   //             const updatedData = await refreshed.json();
-  //             console.log("✅ Updated activities after join:", updatedData.activities);
-  //             console.log("➡️ userId (type):", userId, typeof userId);
-  //             console.log("➡️ participants (type):", data.activity.participants, typeof data.activity.participants[0]);
   //             setActivities(updatedData.activities || []);
   //           }
   //         }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Activity {
     groupId: number;
@@ -17,6 +18,7 @@ interface Props {
 
 const ActivityItem: React.FC<Props> = ({ activity, onDelete, userId }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
 
 
     const handleDeleteClick = (e: React.MouseEvent) => {
@@ -27,9 +29,8 @@ const ActivityItem: React.FC<Props> = ({ activity, onDelete, userId }) => {
     };
 
     const handleCardClick = () => {
-        // TODO: 实现跳转逻辑
         console.log("Card clicked! userId:", userId, "activityId:", activity.groupId);
-        alert(`userId: ${userId}, activityId: ${activity.groupId}`); // TODO: FOR TEST
+        navigate(`/travel/${activity.groupId}`);
     };
 
 
