@@ -148,7 +148,6 @@ const HomePage: React.FC = () => {
         setLoading(false); // stop loading
       }
     };
-
     fetchActivities();
   }, [userId]);
 
@@ -323,18 +322,21 @@ const HomePage: React.FC = () => {
 
         if (response.status === 200) {
           const data = await response.json();
+          console.log("🎯 Join response data:", data);
+          console.log("🎯 Participants in activity:", data.activity.participants);
+          console.log("🎯 userId (parsed):", parseInt(userId, 10));
 
-          // 检查用户是否已经在活动中
-          const isAlreadyJoined = data.activity.participants.includes(
-            parseInt(userId, 10)
-          );
-          if (isAlreadyJoined) {
-            setFormErrorMessage("Already joined this activity.");
+          setActivityId("");
+          setShowJoinForm(false);
+          handleCloseForms();
+          alert("Successfully joined the activity!");
+          const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
+          if (refreshed.ok) {
+            const updatedData = await refreshed.json();
+            console.log("✅ Updated activities after join:", updatedData.activities);
+            setActivities(updatedData.activities || []);
           } else {
-            setActivityId("");
-            setShowJoinForm(false);
-            handleCloseForms();
-            fetchActivities(); // 刷新活动列表
+            console.error("❌ Failed to refresh activities:", refreshed.status);
           }
         } else if (response.status === 404) {
           setFormErrorMessage("Activity does not exist.");
@@ -353,6 +355,46 @@ const HomePage: React.FC = () => {
       }
     }
   };
+
+
+
+
+  //         // 检查用户是否已经在活动中
+  //         const isAlreadyJoined = data.activity.participants.includes(
+  //           parseInt(userId, 10)
+  //         );
+  //         if (isAlreadyJoined) {
+  //           setFormErrorMessage("Already joined this activity.");
+  //         } else {
+  //           setActivityId("");
+  //           setShowJoinForm(false);
+  //           handleCloseForms();
+  //           const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
+  //           if (refreshed.ok) {
+  //             const updatedData = await refreshed.json();
+  //             console.log("✅ Updated activities after join:", updatedData.activities);
+  //             console.log("➡️ userId (type):", userId, typeof userId);
+  //             console.log("➡️ participants (type):", data.activity.participants, typeof data.activity.participants[0]);
+  //             setActivities(updatedData.activities || []);
+  //           }
+  //         }
+  //       } else if (response.status === 404) {
+  //         setFormErrorMessage("Activity does not exist.");
+  //       } else {
+  //         setFormErrorMessage(
+  //           "An unexpected error occurred. Please try again."
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error joining activity by ID:", error);
+  //       setFormErrorMessage(
+  //         "Unable to connect to the server. Please try again."
+  //       );
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  // };
 
   const handleCreateNewActivity = async () => {
     if (!userId) {
@@ -466,9 +508,8 @@ const HomePage: React.FC = () => {
           </li>
           <li className="nav-item">
             <button
-              className={`nav-link ${
-                activeTab === "completed" ? "active" : ""
-              }`}
+              className={`nav-link ${activeTab === "completed" ? "active" : ""
+                }`}
               onClick={() => setActiveTab("completed")}
             >
               Completed
@@ -637,11 +678,10 @@ const HomePage: React.FC = () => {
                     {/* ❌ backend error */}
                     {formErrorMessage && (
                       <span
-                        className={`error-text form-error ${
-                          formErrorMessage === "Already joined this activity."
-                            ? "text-success"
-                            : "text-danger"
-                        }`}
+                        className={`error-text form-error ${formErrorMessage === "Already joined this activity."
+                          ? "text-success"
+                          : "text-danger"
+                          }`}
                       >
                         {formErrorMessage}
                       </span>
