@@ -5,15 +5,11 @@ npm run dev
 
 # To Do
 
-- Change userId, travelID
-
-- delete/add date 只要 Update travel when modify start or end date of the travel? (2.1.5)
-
 - get member fail(2.3.1 fail)
 
-- add new date fail(2.1.5 fail)
+- add new date (ok)
 
-- delete itinerary fail(2.1.5 fail)
+- delete itinerary (ok)
 
 - add new itinerary (ok)
 
