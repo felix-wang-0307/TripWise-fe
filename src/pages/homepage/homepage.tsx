@@ -318,6 +318,8 @@ const HomePage: React.FC = () => {
       try {
         const response = await fetch(
           `${APIURL}/api/travels/activities/${activityId}?userId=${userId}`
+          // const response = await fetch(
+          //   `http://localhost:8080/api/travels/activities/${activityId}?userId=${userId}`
         );
 
         if (response.status === 200) {
@@ -325,18 +327,36 @@ const HomePage: React.FC = () => {
           console.log("🎯 Join response data:", data);
           console.log("🎯 Participants in activity:", data.activity.participants);
           console.log("🎯 userId (parsed):", parseInt(userId, 10));
+          // TODO: if the user is already in the activity, show a message
 
-          setActivityId("");
-          setShowJoinForm(false);
-          handleCloseForms();
-          alert("Successfully joined the activity!");
-          const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
-          if (refreshed.ok) {
-            const updatedData = await refreshed.json();
-            console.log("✅ Updated activities after join:", updatedData.activities);
-            setActivities(updatedData.activities || []);
+          // setActivityId("");
+          // setShowJoinForm(false);
+          // handleCloseForms();
+          // alert("Successfully joined the activity!");
+          // const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
+          // if (refreshed.ok) {
+          //   const updatedData = await refreshed.json();
+          //   console.log("✅ Updated activities after join:", updatedData.activities);
+          //   setActivities(updatedData.activities || []);
+          // } else {
+          //   console.error("❌ Failed to refresh activities:", refreshed.status);
+          // }
+          if (!data.justJoined) {
+            // 已经在活动中，提示但不刷新
+            setFormErrorMessage("Already joined this activity.");
           } else {
-            console.error("❌ Failed to refresh activities:", refreshed.status);
+            // 成功加入，刷新活动列表
+            setActivityId("");
+            setShowJoinForm(false);
+            handleCloseForms();
+            const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
+            if (refreshed.ok) {
+              const updatedData = await refreshed.json();
+              console.log("✅ Updated activities after join:", updatedData.activities);
+              setActivities(updatedData.activities || []);
+            } else {
+              console.error("❌ Failed to refresh activities:", refreshed.status);
+            }
           }
         } else if (response.status === 404) {
           setFormErrorMessage("Activity does not exist.");
