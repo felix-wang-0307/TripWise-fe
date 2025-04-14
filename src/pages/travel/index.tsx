@@ -48,7 +48,7 @@ function Travel() {
         // Fetch Travel Details
         const travelResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
         setTravelList(travelResponse.data.activity);
-        console.log("Travel Detail:", travelResponse.data.activity);
+        // console.log("Travel Detail:", travelResponse.data.activity);
 
         // groupId is the same as activityId
         const groupId = travelResponse.data.activity.groupId;
@@ -58,7 +58,7 @@ function Travel() {
         setItineraryList(organizeItinerary(itineraryResponse.data));
 
         // Fetch Members
-        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/groups/${groupId}/members`);
+        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
         setMembersList(groupResponse.data);
 
       } catch (error) {
@@ -71,12 +71,12 @@ function Travel() {
     fetchData();
   }, [activityId]); // Dependency array ensures this runs only once on mount and when TRAVEL_ID changes
 
-
-  // TODO: Need to Update Database Accordingly
   const onDeleteTrip = async (date: string, itineraryId: string) => {
     try {
       // Call delete API
-      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries/${itineraryId}`);
+      // Extract numeric ID whether it's "16" or "itinerary_16"
+      const numericId = itineraryId.toString().match(/\d+$/)?.[0];
+      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries/${numericId}`);
 
       // Update local state
       const updatedItinerary = { ...itineraryList };
@@ -92,7 +92,6 @@ function Travel() {
     }
   }
 
-  // TODO: Need to Update Database Accordingly
   const onDeleteDate = async (date) => {
     try {
       // Check if it's the start or end date
@@ -107,9 +106,17 @@ function Travel() {
         if (isEndDate) {
           updatedTravel.endDate = Object.keys(itineraryList).reverse().find(d => d < date) || date;
         }
-        // Update travel dates using API 2.1.5
-        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
-        setTravelList(updatedTravel);
+        // Update backend
+        await axios.put(
+          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`,
+          updatedTravel
+        );
+
+        // Re-fetch updated travel detail
+        const refreshed = await axios.get(
+          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`
+        );
+        setTravelList(refreshed.data.activity);
       }
       // update local state
       const updatedItinerary = { ...itineraryList };
@@ -129,7 +136,6 @@ function Travel() {
     setDateInputError(false)
   }
 
-  // TODO: Need to Update Database Accordingly
   const onAddDate = async (date) => {
     if (itineraryList[date] || date.length === 0) {
       setDateInputError(true)
@@ -142,15 +148,15 @@ function Travel() {
 
       // Update travel dates if necessary
       if (isBeforeStart || isAfterEnd) {
-        const updatedTravel = { ...travelDetail };
-        if (isBeforeStart) {
-          updatedTravel.startDate = date;
-        }
-        if (isAfterEnd) {
-          updatedTravel.endDate = date;
-        }
+        const updatedTravel = {
+          ...travelDetail,
+          startDate: isBeforeStart ? date : travelDetail.startDate,
+          endDate: isAfterEnd ? date : travelDetail.endDate,
+        };
         await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
-        setTravelList(updatedTravel);
+        // re-fetch updated travel detail
+        const refreshed = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
+        setTravelList(refreshed.data.activity);
       }
 
       // Update local state
@@ -172,7 +178,6 @@ function Travel() {
     }
   }
 
-  // TODO: Need to Update Database Accordingly
   const onAddTrip = async (trip: TravelItinerary) => {
     try {
       // POST new itinerary
