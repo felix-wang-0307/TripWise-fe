@@ -5,15 +5,11 @@ npm run dev
 
 # To Do
 
-- Change userId, travelID
-
-- delete/add date 只要 Update travel when modify start or end date of the travel? (2.1.5)
-
 - get member fail(2.3.1 fail)
 
-- add new date fail(2.1.5 fail)
+- add new date (ok)
 
-- delete itinerary fail(2.1.5 fail)
+- delete itinerary (ok)
 
 - add new itinerary (ok)
 
@@ -92,7 +88,7 @@ npm run dev
 
 ### 2.3.1 Get All Group Members
 
-- Endpoint: `GET /api/groups/{groupId}/members`
+- Endpoint: `GET /api/travels/{groupId}/members`
 - Description: Retrieves a list of users in the travel group.
 - Response:
     ```json
