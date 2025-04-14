@@ -58,7 +58,7 @@ function Travel() {
         setItineraryList(organizeItinerary(itineraryResponse.data));
 
         // Fetch Members
-        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/groups/${groupId}/members`);
+        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
         setMembersList(groupResponse.data);
 
       } catch (error) {

@@ -88,7 +88,7 @@ npm run dev
 
 ### 2.3.1 Get All Group Members
 
-- Endpoint: `GET /api/groups/{groupId}/members`
+- Endpoint: `GET /api/travels/{groupId}/members`
 - Description: Retrieves a list of users in the travel group.
 - Response:
     ```json
