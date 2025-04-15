@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { createBill, updateBill } from "../services/billServices";
 import styles from "../bill.module.css";
 import { Form, Button, Row, Col, Modal } from "react-bootstrap";
+import { useAppContext } from "../../../AppContext";
 
 export const BillFormBody = ({
   activityId,
@@ -36,8 +37,7 @@ export const BillFormBody = ({
         }
   );
 
-  console.log(isUpdatingBill, updatingBill);
-  
+  const { groupMembers } = useAppContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +45,7 @@ export const BillFormBody = ({
   };
 
   const handleSubmit = async (e) => {
+    console.log("Form submitted with data:", formData);
     e.preventDefault();
     try {
       const billData: IBill = {
@@ -84,8 +85,8 @@ export const BillFormBody = ({
           </Form.Group>
         </Col>
       </Row>
-      <Row className="mb-3">
-        <Col>
+      <Row className="g-3 mb-3">
+        <Col md={6}>
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
             <Form.Control
@@ -98,7 +99,7 @@ export const BillFormBody = ({
             />
           </Form.Group>
         </Col>
-        <Col>
+        <Col md={6}>
           <Form.Group controlId="currency">
             <Form.Label>Currency</Form.Label>
             <Form.Select
@@ -115,8 +116,8 @@ export const BillFormBody = ({
           </Form.Group>
         </Col>
       </Row>
-      <Row className="mb-3">
-        <Col>
+      <Row className="g-3 mb-3">
+        <Col md={6}>
           <Form.Group controlId="expenseDate">
             <Form.Label>Expense Date</Form.Label>
             <Form.Control
@@ -127,8 +128,8 @@ export const BillFormBody = ({
             />
           </Form.Group>
         </Col>
-        <Col>
-          <Form.Group controlId="splitType">
+        <Col md={6}>
+          {/* <Form.Group controlId="splitType">
             <Form.Label>Split Type</Form.Label>
             <Form.Select
               name="splitType"
@@ -138,7 +139,42 @@ export const BillFormBody = ({
               <option value="equal">Equal</option>
               <option value="unequal">Unequal</option>
             </Form.Select>
+          </Form.Group> */}
+        </Col>
+      </Row>
+      <Row className="mb-3">
+        <Col>
+          <Form.Group controlId="participants">
+            <Form.Label>Split By:</Form.Label>
+            {groupMembers.map((participant) => (
+              <Form.Check
+                key={participant.userId}
+                type="checkbox"
+                label={participant.username}
+                value={participant.userId}
+                checked={formData.participants.includes(participant.userId)}
+                onChange={(e) => {
+                  const { value, checked } = e.target;
+                  setFormData((prevFormData: IBillForm) => {
+                    const updatedParticipants = checked
+                      ? [...prevFormData.participants, value]
+                      : prevFormData.participants.filter((id) => id !== value);
+                    return {
+                      ...prevFormData,
+                      participants: updatedParticipants,
+                    };
+                  });
+                }}
+              />
+            ))}
           </Form.Group>
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        <Col className="d-flex justify-content-end">
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
         </Col>
       </Row>
     </Form>
@@ -176,14 +212,18 @@ export const BillForm = ({
           updatingBill={updatingBill}
         />
       </Modal.Body>
-      <Modal.Footer>
+      {/* <Modal.Footer>
         <Button variant="secondary" onClick={() => setIsFormVisible(false)}>
           Close
         </Button>
-        <Button variant="primary" type="submit">
+        <Button
+          variant="primary"
+          type="submit"
+          form="bill-form" // Add form ID to link the button to the form
+        >
           Submit
         </Button>
-      </Modal.Footer>
+      </Modal.Footer> */}
     </Modal>
   );
 };
