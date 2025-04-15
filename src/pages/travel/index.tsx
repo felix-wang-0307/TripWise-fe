@@ -216,7 +216,7 @@ function Travel() {
       <div className="d-flex align-items-center mx-auto my-4">
         <div className="col-6 d-flex align-items-center">
           <h1><strong>{travelDetail.name}</strong></h1>
-          <p className="mx-2 my-0 text-secondary">Room Number:{activityId}</p>
+          <p className="mx-2 my-0 text-secondary">Room ID:{activityId}</p>
         </div>
         <div className={`col-6 ${styles.bubbleContainer}`}>
           {membersList.slice(0, MAXBUBBLES).map(item => <TravelBubble key={item.userId} desc={item.username} />)}
