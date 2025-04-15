@@ -3,7 +3,7 @@ interface IUser {
   // Equivalent to the Member in Travel page
   userId: string;
   username: string;
-  role: string;
+  role?: string;
 }
 
 interface IBillForm {

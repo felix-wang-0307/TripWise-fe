@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import Bubble from "./TravelBubble"
+import TravelBubble from "./TravelBubble"
 import styles from "./travel.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import TravelDateEntry from "./TravelDateEntry";
@@ -20,6 +20,7 @@ interface TravelData {
   participants: number[]; // Assuming userId is a number
 }
 
+// Equivalent to IUser
 interface Member {
   userId: string;
   username: string;
@@ -215,8 +216,8 @@ function Travel() {
       <div className="d-flex align-items-center mx-auto my-4">
         <h1 className="col-6"><strong>{travelDetail.name}</strong></h1>
         <div className={`col-6 ${styles.bubbleContainer}`}>
-          {membersList.slice(0, MAXBUBBLES).map(item => <Bubble key={item.userId} desc={item.username} />)}
-          {membersList.length > MAXBUBBLES && <Bubble desc={`+${membersList.length - MAXBUBBLES}`}></Bubble>}
+          {membersList.slice(0, MAXBUBBLES).map(item => <TravelBubble key={item.userId} desc={item.username} />)}
+          {membersList.length > MAXBUBBLES && <TravelBubble desc={`+${membersList.length - MAXBUBBLES}`}></TravelBubble>}
         </div>
       </div >
 
