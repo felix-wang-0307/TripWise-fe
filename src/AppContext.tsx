@@ -1,21 +1,20 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 
 interface AppContextProps {
-  user: string | null;
-  setUser: (user: string | null) => void;
+  groupMembers: IUser[];
+  [key: string]: any; // Allow additional properties
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<string | null>(null);
+interface AppProviderProps {
+  value: AppContextProps;
+  children: ReactNode;
+}
 
-  return (
-    <AppContext.Provider value={{ user, setUser }}>
-      {children}
-    </AppContext.Provider>
-  );
+export const AppProvider: React.FC<AppProviderProps> = ({ value, children }) => {
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = (): AppContextProps => {
