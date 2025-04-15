@@ -1,4 +1,4 @@
-import styles from "./travel.module.css";
+import styles from "../travel.module.css";
 
 function TravelBubble({ desc }) {
     return (
