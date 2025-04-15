@@ -88,6 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
   };
 
   const displaynameChange = () => {
+    setchangedisplay(false);
     senddpreq();
   };
   const monitorPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +225,10 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
       if (response.status === 200) {
         Cookies.remove("authToken");
         setUserId("");
-        onUserIdLoaded("");
+        if (onUserIdLoaded) {
+          onUserIdLoaded("");
+        }
+
         setUsername("");
         setDPname("");
         navigate("/login");
@@ -258,7 +262,10 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
 
         if (response.status === 200) {
           setUserId(data.userId);
-          onUserIdLoaded(data.userId);
+          if (onUserIdLoaded) {
+            onUserIdLoaded(data.userId);
+          }
+
           setUsername(data.username);
           setDPname(data.displayName);
           setemail(data.email);
