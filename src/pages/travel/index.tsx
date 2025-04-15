@@ -214,11 +214,11 @@ function Travel() {
     <div className="w-75 mx-auto">
       {/* Trip Title */}
       <div className="d-flex align-items-center mx-auto my-4">
-        <div className="col-6 d-flex align-items-center">
-          <h1><strong>{travelDetail.name}</strong></h1>
-          <p className="mx-2 my-0 text-secondary">Room ID:{activityId}</p>
+        <div className="col-8 d-flex align-items-center">
+          <h2><strong>{travelDetail.name}</strong></h2>
+          <p className="ms-2 my-0 text-secondary">Room ID:{activityId}</p>
         </div>
-        <div className={`col-6 ${styles.bubbleContainer}`}>
+        <div className={`col-4 ${styles.bubbleContainer}`}>
           {membersList.slice(0, MAXBUBBLES).map(item => <TravelBubble key={item.userId} desc={item.username} />)}
           {membersList.length > MAXBUBBLES && <TravelBubble desc={`+${membersList.length - MAXBUBBLES}`}></TravelBubble>}
         </div>
