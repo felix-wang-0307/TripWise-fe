@@ -14,11 +14,12 @@ const AppRouter = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<App />} />
           <Route path="/index" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} /> {/* Signup Page */}
           <Route path="/travel" element={<TravelsAndBill />} />
           <Route path="/travel/:activityId" element={<TravelsAndBill />} />
           <Route path="/bill" element={<Bill />} />
