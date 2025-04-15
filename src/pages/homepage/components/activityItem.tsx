@@ -53,13 +53,39 @@ const ActivityItem: React.FC<Props> = ({ activity, onDelete, userId }) => {
             onMouseLeave={() => setIsHovered(false)}
             onClick={handleCardClick}
         >
-            <h4 style={{ marginBottom: "5px", color: "#084a86" }}>{activity.name}</h4>
+            <h4
+                style={{
+                    marginBottom: "5px",
+                    color: "#084a86",
+                    display: "flex",
+                    alignItems: "baseline",
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                }}
+            >
+                {activity.name}
+                <span
+                    style={{
+                        fontSize: "11px",
+                        color: "#89b6dd",
+                        marginLeft: "10px",
+                        fontWeight: "normal",
+                    }}
+                >
+                    # ID: {activity.groupId}
+                </span>
+            </h4>
+
             <p style={{ fontSize: "12px", color: "#888" }}>
                 🗓 {activity.startDate} ~ {activity.endDate}
             </p>
             <p style={{ margin: "5px 0", fontSize: "13px", color: "#555" }}>
                 {activity.description}
             </p>
+            {/* 显示 activity ID
+            <p style={{ fontSize: "10px", color: "#aaa", marginTop: "8px", marginBottom: "0px" }}>
+                ID: {activity.groupId}
+            </p> */}
 
             <button
                 onClick={handleDeleteClick}
