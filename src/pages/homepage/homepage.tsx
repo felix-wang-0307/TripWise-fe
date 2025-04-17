@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Navbar from "./components/navBar.tsx";
 import ActivityList from "./components/activityList.tsx";
 import Loading from "./components/loading.tsx";
+
+import { useOutletContext } from "react-router-dom";
 // import { mockActivities } from "./mock/mockActivities.ts";
 import "./homepage.css";
 
@@ -16,7 +18,7 @@ interface Activity {
 
 const HomePage: React.FC = () => {
   //const userId = "3";  // TODO: hardcode userId for testing
-  const [userId, setUserId] = useState("");
+  const { userId } = useOutletContext<{ userId: string }>();
   const APIURL = import.meta.env.VITE_APIURL;
   // const [activities, setActivities] = useState(mockActivities);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -325,7 +327,10 @@ const HomePage: React.FC = () => {
         if (response.status === 200) {
           const data = await response.json();
           console.log("🎯 Join response data:", data);
-          console.log("🎯 Participants in activity:", data.activity.participants);
+          console.log(
+            "🎯 Participants in activity:",
+            data.activity.participants
+          );
           console.log("🎯 userId (parsed):", parseInt(userId, 10));
           // TODO: if the user is already in the activity, show a message
 
@@ -349,13 +354,21 @@ const HomePage: React.FC = () => {
             setActivityId("");
             setShowJoinForm(false);
             handleCloseForms();
-            const refreshed = await fetch(`${APIURL}/api/travels/users/${userId}`);
+            const refreshed = await fetch(
+              `${APIURL}/api/travels/users/${userId}`
+            );
             if (refreshed.ok) {
               const updatedData = await refreshed.json();
-              console.log("✅ Updated activities after join:", updatedData.activities);
+              console.log(
+                "✅ Updated activities after join:",
+                updatedData.activities
+              );
               setActivities(updatedData.activities || []);
             } else {
-              console.error("❌ Failed to refresh activities:", refreshed.status);
+              console.error(
+                "❌ Failed to refresh activities:",
+                refreshed.status
+              );
             }
           }
         } else if (response.status === 404) {
@@ -375,9 +388,6 @@ const HomePage: React.FC = () => {
       }
     }
   };
-
-
-
 
   //         // 检查用户是否已经在活动中
   //         const isAlreadyJoined = data.activity.participants.includes(
@@ -508,7 +518,6 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <Navbar onUserIdLoaded={setUserId} />
       {/* <Navbar onUserIdLoaded={setUserId} /> */}
 
       {/* Tabs */}
@@ -525,8 +534,9 @@ const HomePage: React.FC = () => {
           </li>
           <li className="nav-item">
             <button
-              className={`nav-link ${activeTab === "completed" ? "active" : ""
-                }`}
+              className={`nav-link ${
+                activeTab === "completed" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("completed")}
             >
               Completed
@@ -695,10 +705,11 @@ const HomePage: React.FC = () => {
                     {/* ❌ backend error */}
                     {formErrorMessage && (
                       <span
-                        className={`error-text form-error ${formErrorMessage === "Already joined this activity."
-                          ? "text-success"
-                          : "text-danger"
-                          }`}
+                        className={`error-text form-error ${
+                          formErrorMessage === "Already joined this activity."
+                            ? "text-success"
+                            : "text-danger"
+                        }`}
                       >
                         {formErrorMessage}
                       </span>

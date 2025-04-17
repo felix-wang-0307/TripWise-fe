@@ -17,7 +17,6 @@ export function TravelsAndBill() {
 
   useEffect(() => {
     const fetchGroupMembers = async () => {
-      
       const response = await fetch(
         `${BACKEND}/api/travels/${activityId}/members`,
         {
@@ -43,7 +42,6 @@ export function TravelsAndBill() {
 
   return (
     <AppProvider value={{ groupMembers }}>
-      <Navbar />
       <div className="container d-flex justify-content-center align-items-center mt-4">
         <div className="w-100 w-md-50 p-3 rounded shadow">
           <Tabs

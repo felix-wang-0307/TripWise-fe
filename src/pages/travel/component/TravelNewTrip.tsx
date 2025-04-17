@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { TravelItinerary } from "./utils/TravelItineraryInterface"
+import { TravelItinerary } from "../utils/TravelItineraryInterface"
 
 function TravelNewTrip({ date, onAddTrip, tempNum, setShowAddTrip }) {
     const [time, setTime] = useState("")

@@ -1,10 +1,10 @@
 import { useState } from "react"
-import Bubble from "./TravelBubble"
+import Bubble from "./component/TravelBubble"
 import styles from "./travel.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TravelDateEntry from "./TravelDateEntry";
-import TravelButton from "./TravelButton";
-import TravelNewDate from "./TravelNewDate";
+import TravelDateEntry from "./component/TravelDateEntry";
+import TravelButton from "./component/TravelButton";
+import TravelNewDate from "./component/TravelNewDate";
 import { TravelItinerary } from "./utils/TravelItineraryInterface";
 import { organizeItinerary } from "./utils/organizeItinerary";
 import { findInsertionId } from "./utils/findInsertionId";

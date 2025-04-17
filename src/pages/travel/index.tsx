@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
-import TravelBubble from "./TravelBubble"
+import TravelBubble from "./component/TravelBubble"
 import styles from "./travel.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TravelDateEntry from "./TravelDateEntry";
-import TravelButton from "./TravelButton";
-import TravelNewDate from "./TravelNewDate";
+import TravelDateEntry from "./component/TravelDateEntry";
+import TravelButton from "./component/TravelButton";
+import TravelNewDate from "./component/TravelNewDate";
 import { TravelItinerary } from "./utils/TravelItineraryInterface";
 import { organizeItinerary } from "./utils/organizeItinerary";
 import { findInsertionId } from "./utils/findInsertionId";
@@ -205,7 +205,7 @@ function Travel() {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  
+
   if (!travelDetail) {
     return <div>No travel data available.</div>;
   }
@@ -214,8 +214,11 @@ function Travel() {
     <div className="w-75 mx-auto">
       {/* Trip Title */}
       <div className="d-flex align-items-center mx-auto my-4">
-        <h1 className="col-6"><strong>{travelDetail.name}</strong></h1>
-        <div className={`col-6 ${styles.bubbleContainer}`}>
+        <div className="col-8 d-flex align-items-center">
+          <h2><strong>{travelDetail.name}</strong></h2>
+          <p className="ms-2 my-0 text-secondary">Room ID:{activityId}</p>
+        </div>
+        <div className={`col-4 ${styles.bubbleContainer}`}>
           {membersList.slice(0, MAXBUBBLES).map(item => <TravelBubble key={item.userId} desc={item.username} />)}
           {membersList.length > MAXBUBBLES && <TravelBubble desc={`+${membersList.length - MAXBUBBLES}`}></TravelBubble>}
         </div>
