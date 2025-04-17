@@ -18,3 +18,21 @@ export function formatCurrency(amount: number, currency: string): string {
   }).format(amount);
 }
 
+export function isGoodResponse(response: IResponse | undefined): boolean {
+  if (!response) {
+    return false;
+  }
+  if (response.code && response.code.toString()[0] !== "2") {
+    return false;
+  }
+  if (response.message && response.message !== "OK") {
+    return false;
+  }
+  return true;
+}
+
+export const BadResponse = {
+  code: 500,
+  message: "Internal Server Error",
+  data: null,
+};
