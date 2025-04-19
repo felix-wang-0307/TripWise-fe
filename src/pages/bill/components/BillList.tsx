@@ -1,69 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { getBillsByTravel } from "../services/billServices";
-import { formatDate } from "../utils";
+import { formatCurrency, formatDate, getBillPortion, isEqualNumber } from "../utils";
 import { Alert, ListGroup } from "react-bootstrap";
-import styles from "../bill.module.css";
+import { useAppContext } from "../../../AppContext";
+import { findUsernameById } from "../services/memberServices";
+// import styles from "../bill.module.css";
 
-const mockBills: IBill[] = [
-  {
-    billId: "1",
-    travelId: "1",
-    userId: "1",
-    description: "Dinner",
-    amount: 50,
-    currency: "USD",
-    paidBy: "1",
-    participants: ["1", "2"],
-    expenseDate: new Date().toISOString(),
-    splitType: "equal",
-    split: [
-      { userId: "1", amount: 25 },
-      { userId: "2", amount: 25 },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    billId: "2",
-    travelId: "1",
-    userId: "2",
-    description: "Taxi",
-    amount: 30,
-    currency: "USD",
-    paidBy: "2",
-    participants: ["1", "2"],
-    expenseDate: new Date().toISOString(),
-    splitType: "equal",
-    split: [
-      { userId: "1", amount: 15 },
-      { userId: "2", amount: 15 },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    billId: "3",
-    travelId: "1",
-    userId: "1",
-    description: "Lunch",
-    amount: 40,
-    currency: "USD",
-    paidBy: "1",
-    participants: ["1", "2"],
-    expenseDate: new Date().toISOString(),
-    splitType: "equal",
-    split: [
-      { userId: "1", amount: 20 },
-      { userId: "2", amount: 20 },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+const BillPortion = ({ portion, currency }: { portion: number; currency: string }) => {
+  const portionText = portion > 0 ? "You owed" : "You lent";
+  if (isEqualNumber(portion, 0)) {
+    return <span></span>;
+  }
+  return (
+    <span style={{ color: portion > 0 ? "red" : "green" }}>
+      {portionText} {formatCurrency(Math.abs(portion), currency)}
+    </span>
+  );
+}
 
 const BillList = ({ travelId, handleUpdateBill }) => {
-  const [bills, setBills] = useState<IBill[]>(mockBills);
+  const [bills, setBills] = useState<IBill[]>([]);
   const [error, setError] = useState(null);
+  const { groupMembers, userId } = useAppContext();
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -75,7 +33,7 @@ const BillList = ({ travelId, handleUpdateBill }) => {
       } catch (err) {
         setError(err);
         console.error("Error fetching bills:", err);
-        setBills(mockBills);
+        // setBills(mockBills);
       }
     };
 
@@ -95,33 +53,34 @@ const BillList = ({ travelId, handleUpdateBill }) => {
       No bills found for this travel. Please add some bills.
     </Alert>
   ) : (
-    <ListGroup className={styles["bill-list"]} as={"ul"}>
-      {bills.map((bill) => (
-        <ListGroup.Item
-          key={bill.billId}
-          className={styles["bill-item"]}
-          as={"li"}
-        >
-          <div className={styles["bill-item-header"]}>
+    <ListGroup as="ul">
+      {bills.map((bill) => {
+        return <ListGroup.Item key={bill.billId} as="li" className="mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-2">
             <strong>{bill.description}</strong>
-            <span className={styles["bill-item-date"]}>
-              {formatDate(bill.expenseDate)}
-            </span>
+            <span className="text-muted">{formatDate(bill.expenseDate)}</span>
           </div>
-          <div className={styles["bill-item-details"]}>
+          <div className="d-flex justify-content-between">
             <span>
-              Amount: {bill.amount} {bill.currency}
+                <em>{findUsernameById(groupMembers, bill.paidBy)}</em> 
+              <span> paid </span>
+              <strong>{formatCurrency(bill.amount, bill.currency ?? "USD")}</strong> 
             </span>
-            <span>Paid by: {bill.paidBy}</span>
+            <span>
+              <BillPortion
+                portion={getBillPortion(bill, userId)}
+                currency={bill.currency ?? "USD"}
+              />
+            </span>
           </div>
           <button
-            className={styles["update-button"]}
+            className="btn btn-primary btn-sm mt-2"
             onClick={() => handleUpdateBill(bill)}
           >
             Update
           </button>
         </ListGroup.Item>
-      ))}
+    })}
     </ListGroup>
   );
 };
