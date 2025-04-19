@@ -25,7 +25,7 @@ export async function getBillsByTravel(travelId: string): Promise<IBill[]> {
     method: "GET",
   }).then((res) => res.json());
   if (isGoodResponse(res)) {
-    return res.bills;
+    return res.expenses;
   }
   return [];
 }
