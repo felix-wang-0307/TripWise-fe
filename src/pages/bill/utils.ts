@@ -8,7 +8,7 @@ export function formatDate(dateString: string): string {
 }
 
 /* Format currency to '$1,234.56' */
-export function formatCurrency(amount: number, currency: string): string {
+export function formatCurrency(amount: number, currency = "USD"): string {
   return Intl.NumberFormat(currency === 'CNY' ? 'zh-CN' : 'en-US', {
     style: "currency",
     currency: currency,
@@ -36,3 +36,32 @@ export const BadResponse = {
   message: "Internal Server Error",
   data: null,
 };
+
+export function isEqualNumber(a: number, b: number): boolean {
+  return Math.abs(a - b) < 5 * Number.EPSILON;
+}
+
+export function getBillPortion(bill: IBill, userId: string): number {
+  // Check if paid by the user
+  let portion = 0;
+  if (bill.paidBy === userId) {
+    portion -= bill.amount;
+  }
+  // Check if the user is a participant
+  if (bill.participants && bill.participants.includes(userId)) {
+    // If splitType is unequal, find the user's portion
+    if (bill.splitType && bill.splitType === "unequal") {
+      const split = bill.split.find((s) => s.userId === userId);
+      if (split) {
+        portion += split.amount;
+      }
+    }
+    // If splitType is equal, divide the amount by the number of participants
+    else {
+      portion += bill.amount / bill.participants.length;
+    }
+  }
+  // Positive portion means the user owes money
+  // Negative portion means the user is owed money
+  return portion; 
+}
