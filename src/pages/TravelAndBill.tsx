@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "./homepage/components/navBar";
+// import Navbar from "./homepage/components/navBar";
 import Travel from "./travel";
 import Bill from "./bill";
 import { Tab, Tabs } from "react-bootstrap";
@@ -41,7 +41,7 @@ export function TravelsAndBill() {
   }, [userId, activityId]);
 
   return (
-    <AppProvider value={{ groupMembers }}>
+    <AppProvider value={{ groupMembers, userId, activityId }}>
       <div className="container d-flex justify-content-center align-items-center mt-4">
         <div className="w-100 w-md-50 p-3 rounded shadow">
           <Tabs

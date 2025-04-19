@@ -10,9 +10,10 @@ function Bill() {
   const userId = queryParams.get("userId") || "None";
 
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [updatingBill, setUpdatingBill] = useState<IBill>();
+  const [updatingBill, setUpdatingBill] = useState<IBill | undefined>();
 
   const handleAddBill = () => {
+    setUpdatingBill(undefined);
     setIsFormVisible(true);
   };
 
@@ -26,7 +27,7 @@ function Bill() {
       <div className="container d-flex justify-content-center align-items-center mt-4">
         <div className="w-100 w-md-50 p-3 border rounded shadow">
           <BillList travelId={activityId} handleUpdateBill={handleUpdateBill} />
-          <Button onClick={handleAddBill} className="w-100 mt-3">
+          <Button onClick={handleAddBill} className="w-100 w-md-25 mt-3">
             Add Bill
           </Button>
         </div>
