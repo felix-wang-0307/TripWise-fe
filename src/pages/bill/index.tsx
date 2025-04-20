@@ -11,6 +11,7 @@ function Bill() {
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [updatingBill, setUpdatingBill] = useState<IBill | undefined>();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleAddBill = () => {
     setUpdatingBill(undefined);
@@ -20,13 +21,17 @@ function Bill() {
   const handleUpdateBill = (bill: IBill) => {
     setUpdatingBill(bill);
     setIsFormVisible(true);
-  }
+  };
 
   return (
     <>
       <div className="container d-flex justify-content-center align-items-center mt-4">
         <div className="w-100 w-md-50 p-3 border rounded shadow">
-          <BillList travelId={activityId} handleUpdateBill={handleUpdateBill} />
+          <BillList
+            travelId={activityId}
+            handleUpdateBill={handleUpdateBill}
+            refreshKey={refreshKey}
+          />
           <Button onClick={handleAddBill} className="w-100 w-md-25 mt-3">
             Add Bill
           </Button>
@@ -39,6 +44,7 @@ function Bill() {
             updatingBill={updatingBill}
             isFormVisible={isFormVisible}
             setIsFormVisible={setIsFormVisible}
+            setRefreshKey={setRefreshKey}
           />
         </div>
       </div>

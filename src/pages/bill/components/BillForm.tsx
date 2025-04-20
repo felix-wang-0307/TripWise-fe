@@ -17,10 +17,12 @@ export const BillFormBody = ({
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
 }) => {
+  // console.log("Updating Bill:", updatingBill);
   const [formData, setFormData] = useState<IBillForm>(
     isUpdatingBill
       ? {
           ...updatingBill,
+          expenseDate: updatingBill.expenseDate?.split("T")[0],
           travelId: activityId,
           userId,
         }
@@ -56,7 +58,7 @@ export const BillFormBody = ({
       };
       if (isUpdatingBill) {
         // Update existing bill
-        await updateBill(updatingBill.billId, billData);
+        await updateBill(updatingBill.expenseId, billData);
       } else {
         // Create new bill
         billData.createdAt = new Date().toISOString();
@@ -186,6 +188,7 @@ export const BillForm = ({
   userId,
   isFormVisible,
   setIsFormVisible,
+  setRefreshKey,
   isUpdatingBill = false,
   updatingBill = undefined,
 }: {
@@ -193,6 +196,7 @@ export const BillForm = ({
   userId: string;
   isFormVisible: boolean;
   setIsFormVisible: (isVisible: boolean) => void;
+  setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
 }) => {
@@ -207,6 +211,7 @@ export const BillForm = ({
           userId={userId}
           onSuccess={() => {
             setIsFormVisible(false);
+            setRefreshKey((prev) => prev + 1);
           }}
           isUpdatingBill={isUpdatingBill}
           updatingBill={updatingBill}

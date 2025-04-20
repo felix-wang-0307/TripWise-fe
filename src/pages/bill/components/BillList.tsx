@@ -18,7 +18,7 @@ const BillPortion = ({ portion, currency }: { portion: number; currency: string 
   );
 }
 
-const BillList = ({ travelId, handleUpdateBill }) => {
+const BillList = ({ travelId, handleUpdateBill, refreshKey }) => {
   const [bills, setBills] = useState<IBill[]>([]);
   const [error, setError] = useState(null);
   const { groupMembers, userId } = useAppContext();
@@ -33,12 +33,10 @@ const BillList = ({ travelId, handleUpdateBill }) => {
       } catch (err) {
         setError(err);
         console.error("Error fetching bills:", err);
-        // setBills(mockBills);
       }
     };
-
     fetchBills();
-  }, [travelId]);
+  }, [travelId, refreshKey]);
 
   if (error) {
     return (
@@ -72,6 +70,9 @@ const BillList = ({ travelId, handleUpdateBill }) => {
                 currency={bill.currency ?? "USD"}
               />
             </span>
+          </div>
+          <div className="d-flex justify-content-end align-items-center mt-1">
+            <i className="bi bi-pencil-square"></i>
           </div>
           <button
             className="btn btn-primary btn-sm mt-2"
