@@ -19,13 +19,28 @@ export function formatCurrency(amount: number, currency = "USD"): string {
 }
 
 export function isGoodResponse(response: IResponse | undefined): boolean {
+  function isBadCode(code: string | number): boolean {
+    if (typeof code === "string") {
+      return code[0] !== "2";
+    }
+    if (typeof code === "number") {
+      return code.toString()[0] !== "2";
+    }
+    return false;
+  }
   if (!response) {
     return false;
   }
-  if (response.code && response.code.toString()[0] !== "2") {
+  if (response.code && isBadCode(response.code)) {
+    return false;
+  }
+  if (response.status && isBadCode(response.status)) {
     return false;
   }
   if (response.message && response.message !== "OK") {
+    return false;
+  }
+  if (response.error) {
     return false;
   }
   return true;
