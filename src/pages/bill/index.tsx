@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import BillForm from "./components/BillForm";
 import BillList from "./components/BillList";
 import { Button } from "react-bootstrap";
+import { deleteBill } from "./services/billServices";
 
 function Bill() {
   const { activityId } = useParams<{ activityId: string }>();
@@ -23,6 +24,16 @@ function Bill() {
     setIsFormVisible(true);
   };
 
+  const handleDeleteBill = (billId: number) => {
+    deleteBill(billId)
+      .then(() => {
+        setRefreshKey((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting bill:", error);
+      });
+  };
+
   return (
     <>
       <div className="container d-flex justify-content-center align-items-center mt-4">
@@ -30,6 +41,7 @@ function Bill() {
           <BillList
             travelId={activityId}
             handleUpdateBill={handleUpdateBill}
+            handleDeleteBill={handleDeleteBill}
             refreshKey={refreshKey}
           />
           <Button onClick={handleAddBill} className="w-100 w-md-25 mt-3">

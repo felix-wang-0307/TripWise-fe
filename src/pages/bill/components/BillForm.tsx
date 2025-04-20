@@ -17,7 +17,6 @@ export const BillFormBody = ({
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
 }) => {
-  // console.log("Updating Bill:", updatingBill);
   const [formData, setFormData] = useState<IBillForm>(
     isUpdatingBill
       ? {
@@ -28,7 +27,7 @@ export const BillFormBody = ({
         }
       : {
           travelId: activityId,
-          userId: userId,
+          userId,
           description: "",
           amount: 0,
           currency: "USD",
@@ -39,16 +38,46 @@ export const BillFormBody = ({
         }
   );
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { groupMembers } = useAppContext();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const validateForm = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.description?.trim()) {
+      newErrors.description = "Description is required.";
+    }
+
+    if (formData.amount === undefined || formData.amount <= 0) {
+      newErrors.amount = "Amount must be greater than 0.";
+    } else if (!/^\d+(\.\d{1,2})?$/.test(formData.amount.toString())) {
+      newErrors.amount = "Amount must have at most 2 decimal places.";
+    }
+
+    if (!formData.expenseDate) {
+      newErrors.expenseDate = "Expense date is required.";
+    }
+
+    if (!formData.participants || formData.participants.length === 0) {
+      newErrors.participants = "Select at least one participant.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    console.log("Form submitted with data:", formData);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+      setFormData({ ...formData, [name]: value });
+      validateForm();
+  };
+
+  
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     try {
       const billData: IBill = {
         ...formData,
@@ -57,10 +86,8 @@ export const BillFormBody = ({
         updatedAt: new Date().toISOString(),
       };
       if (isUpdatingBill) {
-        // Update existing bill
         await updateBill(updatingBill.expenseId, billData);
       } else {
-        // Create new bill
         billData.createdAt = new Date().toISOString();
         await createBill(billData);
       }
@@ -71,7 +98,7 @@ export const BillFormBody = ({
   };
 
   return (
-    <Form onSubmit={handleSubmit} className={styles.billForm}>
+    <Form onSubmit={handleSubmit} className={styles.billForm} noValidate>
       <Row className="mb-3">
         <Col>
           <Form.Group controlId="description">
@@ -81,12 +108,17 @@ export const BillFormBody = ({
               name="description"
               value={formData.description}
               onChange={handleChange}
+              isInvalid={!!errors.description}
               placeholder="Enter description"
               required
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.description}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
       </Row>
+
       <Row className="g-3 mb-3">
         <Col md={6}>
           <Form.Group controlId="amount">
@@ -96,9 +128,13 @@ export const BillFormBody = ({
               name="amount"
               value={formData.amount}
               onChange={handleChange}
+              isInvalid={!!errors.amount}
               placeholder="Enter amount"
               required
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.amount}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
         <Col md={6}>
@@ -118,6 +154,7 @@ export const BillFormBody = ({
           </Form.Group>
         </Col>
       </Row>
+
       <Row className="g-3 mb-3">
         <Col md={6}>
           <Form.Group controlId="expenseDate">
@@ -127,23 +164,16 @@ export const BillFormBody = ({
               name="expenseDate"
               value={formData.expenseDate}
               onChange={handleChange}
+              isInvalid={!!errors.expenseDate}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.expenseDate}
+            </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col md={6}>
-          {/* <Form.Group controlId="splitType">
-            <Form.Label>Split Type</Form.Label>
-            <Form.Select
-              name="splitType"
-              value={formData.splitType}
-              onChange={handleChange}
-            >
-              <option value="equal">Equal</option>
-              <option value="unequal">Unequal</option>
-            </Form.Select>
-          </Form.Group> */}
-        </Col>
+        <Col md={6}></Col>
       </Row>
+
       <Row className="mb-3">
         <Col>
           <Form.Group controlId="participants">
@@ -156,12 +186,12 @@ export const BillFormBody = ({
                 value={participant.userId}
                 checked={formData.participants.includes(Number(participant.userId))}
                 onChange={(e) => {
-                  const { value, checked } = e.target;
-                  const participantId = Number(value);
+                  const id = Number(e.target.value);
+                  const { checked } = e.target;
                   setFormData((prevFormData: IBillForm) => {
                     const updatedParticipants = checked
-                      ? [...prevFormData.participants, participantId]
-                      : prevFormData.participants.filter((id) => id !== participantId);
+                      ? [...prevFormData.participants, id]
+                      : prevFormData.participants.filter((pid) => pid !== id);
                     return {
                       ...prevFormData,
                       participants: updatedParticipants,
@@ -170,9 +200,13 @@ export const BillFormBody = ({
                 }}
               />
             ))}
+            {errors.participants && (
+              <div className="text-danger mt-1">{errors.participants}</div>
+            )}
           </Form.Group>
         </Col>
       </Row>
+
       <Row className="mt-4">
         <Col className="d-flex justify-content-end">
           <Button variant="primary" type="submit">
