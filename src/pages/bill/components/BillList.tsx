@@ -71,7 +71,7 @@ const BillList = ({
     <ListGroup as="ul">
       {bills.map((bill) => {
         return (
-          <ListGroup.Item key={bill.billId} as="li" className="mb-3">
+          <ListGroup.Item key={bill.billId} as="li" className="mb-3 border rounded">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <strong>{bill.description}</strong>
               <span className="text-muted">{formatDate(bill.expenseDate)}</span>

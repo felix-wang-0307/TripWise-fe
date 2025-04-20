@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createBill, updateBill } from "../services/billServices";
-import styles from "../bill.module.css";
+// import styles from "../bill.module.css";
 import { Form, Button, Row, Col, Modal } from "react-bootstrap";
 import { useAppContext } from "../../../AppContext";
 
@@ -10,12 +10,14 @@ export const BillFormBody = ({
   onSuccess,
   isUpdatingBill = false,
   updatingBill = undefined,
+  toast,
 }: {
   activityId: number;
   userId: number;
   onSuccess: () => void;
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
+  toast: (message: string, toastType?: string, delay?: number) => void;
 }) => {
   const [formData, setFormData] = useState<IBillForm>(
     isUpdatingBill
@@ -33,7 +35,7 @@ export const BillFormBody = ({
           currency: "USD",
           paidBy: userId,
           participants: [],
-          expenseDate: "",
+          expenseDate: new Date().toISOString().split("T")[0],
           splitType: "equal",
         }
   );
@@ -41,42 +43,60 @@ export const BillFormBody = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { groupMembers } = useAppContext();
 
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const [amountDisplay, setAmountDisplay] = useState<string>("");
+
+  const getFieldError = (field: string): string | null => {
+    switch (field) {
+      case "description":
+        return !formData.description?.trim()
+          ? "Description is required."
+          : null;
+      case "amount":
+        if (formData.amount === undefined || formData.amount <= 0)
+          return "Amount must be greater than 0.";
+        if (!/^\d+(\.\d{1,2})?$/.test(formData.amount.toString()))
+          return "Amount must have at most 2 decimal places.";
+        return null;
+      case "expenseDate":
+        return !formData.expenseDate ? "Expense date is required." : null;
+      case "participants":
+        return formData.participants.length === 0
+          ? "Select at least one participant."
+          : null;
+      default:
+        return null;
+    }
+  };
+
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
-
-    if (!formData.description?.trim()) {
-      newErrors.description = "Description is required.";
-    }
-
-    if (formData.amount === undefined || formData.amount <= 0) {
-      newErrors.amount = "Amount must be greater than 0.";
-    } else if (!/^\d+(\.\d{1,2})?$/.test(formData.amount.toString())) {
-      newErrors.amount = "Amount must have at most 2 decimal places.";
-    }
-
-    if (!formData.expenseDate) {
-      newErrors.expenseDate = "Expense date is required.";
-    }
-
-    if (!formData.participants || formData.participants.length === 0) {
-      newErrors.participants = "Select at least one participant.";
-    }
-
+    ["description", "amount", "expenseDate", "participants"].forEach(
+      (field) => {
+        const error = getFieldError(field);
+        if (error) newErrors[field] = error;
+      }
+    );
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
-      setFormData({ ...formData, [name]: value });
-      validateForm();
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+    setFormData({ ...formData, [name]: value });
+    validateForm();
   };
 
-  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast("Please fix the errors in the form.", "danger");
+      return;
+    }
 
     try {
       const billData: IBill = {
@@ -85,20 +105,53 @@ export const BillFormBody = ({
         travelId: activityId,
         updatedAt: new Date().toISOString(),
       };
+
       if (isUpdatingBill) {
         await updateBill(updatingBill.expenseId, billData);
       } else {
         billData.createdAt = new Date().toISOString();
         await createBill(billData);
       }
+
       onSuccess();
     } catch (error) {
+      toast(`Failed to ${isUpdatingBill ? "update" : "create"} bill`, "danger");
       console.error("Error creating bill:", error);
     }
   };
 
+  const handleAmountChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    let value = e.target.value;
+    const isValid = /^\d+(\.\d*)?$/.test(value);
+    setTouched((prev) => ({ ...prev, amount: true }));
+    if (isValid) {
+      if (value.includes(".")) {
+        const decimalPart = value.split(".")[1];
+        if (decimalPart.length > 2) {
+          value = value.slice(0, value.indexOf(".") + 3);
+        }
+      } 
+      setAmountDisplay(value);
+      setFormData((prevFormData: IBillForm) => ({
+        ...prevFormData,
+        amount: parseFloat(value),
+      }));
+    } else {
+      setFormData((prevFormData: IBillForm) => ({
+        ...prevFormData,
+        amount: 0,
+      }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        amount: "Amount must be a valid number.",
+      }));
+    }
+  }
+
   return (
-    <Form onSubmit={handleSubmit} className={styles.billForm} noValidate>
+    <Form onSubmit={handleSubmit} noValidate>
       <Row className="mb-3">
         <Col>
           <Form.Group controlId="description">
@@ -108,7 +161,9 @@ export const BillFormBody = ({
               name="description"
               value={formData.description}
               onChange={handleChange}
-              isInvalid={!!errors.description}
+              isInvalid={
+                !!touched.description && !!getFieldError("description")
+              }
               placeholder="Enter description"
               required
             />
@@ -124,13 +179,13 @@ export const BillFormBody = ({
           <Form.Group controlId="amount">
             <Form.Label>Amount</Form.Label>
             <Form.Control
-              type="number"
               name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              isInvalid={!!errors.amount}
+              value={amountDisplay}
+              onChange={handleAmountChange}
+              isInvalid={!!touched.amount && !!getFieldError("amount")}
               placeholder="Enter amount"
               required
+              className="mt-2"
             />
             <Form.Control.Feedback type="invalid">
               {errors.amount}
@@ -144,6 +199,7 @@ export const BillFormBody = ({
               name="currency"
               value={formData.currency}
               onChange={handleChange}
+              className="mt-2"
             >
               <option value="USD">USD</option>
               <option value="CNY">CNY</option>
@@ -164,7 +220,9 @@ export const BillFormBody = ({
               name="expenseDate"
               value={formData.expenseDate}
               onChange={handleChange}
-              isInvalid={!!errors.expenseDate}
+              isInvalid={
+                !!touched.expenseDate && !!getFieldError("expenseDate")
+              }
             />
             <Form.Control.Feedback type="invalid">
               {errors.expenseDate}
@@ -184,10 +242,13 @@ export const BillFormBody = ({
                 type="checkbox"
                 label={participant.username}
                 value={participant.userId}
-                checked={formData.participants.includes(Number(participant.userId))}
+                checked={formData.participants.includes(
+                  Number(participant.userId)
+                )}
                 onChange={(e) => {
                   const id = Number(e.target.value);
                   const { checked } = e.target;
+                  setTouched((prev) => ({ ...prev, participants: true }));
                   setFormData((prevFormData: IBillForm) => {
                     const updatedParticipants = checked
                       ? [...prevFormData.participants, id]
@@ -200,8 +261,10 @@ export const BillFormBody = ({
                 }}
               />
             ))}
-            {errors.participants && (
-              <div className="text-danger mt-1">{errors.participants}</div>
+            {touched.participants && getFieldError("participants") && (
+              <div className="text-danger mt-1">
+                {getFieldError("participants")}
+              </div>
             )}
           </Form.Group>
         </Col>
@@ -226,6 +289,7 @@ export const BillForm = ({
   setRefreshKey,
   isUpdatingBill = false,
   updatingBill = undefined,
+  toast,
 }: {
   activityId: number;
   userId: number;
@@ -234,6 +298,7 @@ export const BillForm = ({
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
+  toast: (message: string, toastType?: string, delay?: number) => void;
 }) => {
   return (
     <Modal show={isFormVisible} onHide={() => setIsFormVisible(false)}>
@@ -247,9 +312,11 @@ export const BillForm = ({
           onSuccess={() => {
             setIsFormVisible(false);
             setRefreshKey((prev) => prev + 1);
+            toast(`Bill ${isUpdatingBill ? "updated" : "added"} successfully!`);
           }}
           isUpdatingBill={isUpdatingBill}
           updatingBill={updatingBill}
+          toast={toast}
         />
       </Modal.Body>
       {/* <Modal.Footer>
