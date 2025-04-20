@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { getBillsByTravel } from "../services/billServices";
-import { formatCurrency, formatDate, getBillPortion, isEqualNumber } from "../utils";
+import {
+  formatCurrency,
+  formatDate,
+  getBillPortion,
+  isEqualNumber,
+} from "../utils";
 import { Alert, ListGroup } from "react-bootstrap";
 import { useAppContext } from "../../../AppContext";
 import { findUsernameById } from "../services/memberServices";
+import "bootstrap-icons/font/bootstrap-icons.css";
 // import styles from "../bill.module.css";
 
-const BillPortion = ({ portion, currency }: { portion: number; currency: string }) => {
+const BillPortion = ({
+  portion,
+  currency,
+}: {
+  portion: number;
+  currency: string;
+}) => {
   const portionText = portion > 0 ? "You owed" : "You lent";
   if (isEqualNumber(portion, 0)) {
     return <span></span>;
@@ -16,9 +28,14 @@ const BillPortion = ({ portion, currency }: { portion: number; currency: string 
       {portionText} {formatCurrency(Math.abs(portion), currency)}
     </span>
   );
-}
+};
 
-const BillList = ({ travelId, handleUpdateBill }) => {
+const BillList = ({
+  travelId,
+  handleUpdateBill,
+  handleDeleteBill,
+  refreshKey,
+}) => {
   const [bills, setBills] = useState<IBill[]>([]);
   const [error, setError] = useState(null);
   const { groupMembers, userId } = useAppContext();
@@ -33,12 +50,10 @@ const BillList = ({ travelId, handleUpdateBill }) => {
       } catch (err) {
         setError(err);
         console.error("Error fetching bills:", err);
-        // setBills(mockBills);
       }
     };
-
     fetchBills();
-  }, [travelId]);
+  }, [travelId, refreshKey]);
 
   if (error) {
     return (
@@ -55,32 +70,46 @@ const BillList = ({ travelId, handleUpdateBill }) => {
   ) : (
     <ListGroup as="ul">
       {bills.map((bill) => {
-        return <ListGroup.Item key={bill.billId} as="li" className="mb-3">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <strong>{bill.description}</strong>
-            <span className="text-muted">{formatDate(bill.expenseDate)}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>
-                <em>{findUsernameById(groupMembers, bill.paidBy)}</em> 
-              <span> paid </span>
-              <strong>{formatCurrency(bill.amount, bill.currency ?? "USD")}</strong> 
-            </span>
-            <span>
-              <BillPortion
-                portion={getBillPortion(bill, userId)}
-                currency={bill.currency ?? "USD"}
-              />
-            </span>
-          </div>
-          <button
-            className="btn btn-primary btn-sm mt-2"
-            onClick={() => handleUpdateBill(bill)}
-          >
-            Update
-          </button>
-        </ListGroup.Item>
-    })}
+        return (
+          <ListGroup.Item key={bill.billId} as="li" className="mb-3 border rounded">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <strong>{bill.description}</strong>
+              <span className="text-muted">{formatDate(bill.expenseDate)}</span>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>
+                <em>{findUsernameById(groupMembers, bill.paidBy)}</em>
+                <span> paid </span>
+                <strong>
+                  {formatCurrency(bill.amount, bill.currency ?? "USD")}
+                </strong>
+              </span>
+              <span>
+                <BillPortion
+                  portion={getBillPortion(bill, userId)}
+                  currency={bill.currency ?? "USD"}
+                />
+              </span>
+            </div>
+            <div className="d-flex justify-content-end align-items-center mt-1">
+              <div className="d-flex justify-content-end align-items-center mt-1">
+                <i
+                  className="bi bi-pencil-square"
+                  role="button"
+                  onClick={() => handleUpdateBill(bill)}
+                  title="Edit"
+                ></i>
+                <i
+                  className="bi bi-trash ms-2"
+                  role="button"
+                  onClick={() => handleDeleteBill(bill.expenseId)}
+                  title="Delete"
+                ></i>
+              </div>
+            </div>
+          </ListGroup.Item>
+        );
+      })}
     </ListGroup>
   );
 };

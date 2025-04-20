@@ -19,13 +19,28 @@ export function formatCurrency(amount: number, currency = "USD"): string {
 }
 
 export function isGoodResponse(response: IResponse | undefined): boolean {
+  function isBadCode(code: string | number): boolean {
+    if (typeof code === "string") {
+      return code[0] !== "2";
+    }
+    if (typeof code === "number") {
+      return code.toString()[0] !== "2";
+    }
+    return false;
+  }
   if (!response) {
     return false;
   }
-  if (response.code && response.code.toString()[0] !== "2") {
+  if (response.code && isBadCode(response.code)) {
+    return false;
+  }
+  if (response.status && isBadCode(response.status)) {
     return false;
   }
   if (response.message && response.message !== "OK") {
+    return false;
+  }
+  if (response.error) {
     return false;
   }
   return true;
@@ -41,7 +56,7 @@ export function isEqualNumber(a: number, b: number): boolean {
   return Math.abs(a - b) < 5 * Number.EPSILON;
 }
 
-export function getBillPortion(bill: IBill, userId: string): number {
+export function getBillPortion(bill: IBill, userId: number): number {
   // Check if paid by the user
   let portion = 0;
   if (bill.paidBy === userId) {
