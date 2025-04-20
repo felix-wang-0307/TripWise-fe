@@ -5,7 +5,7 @@ import BillList from "./components/BillList";
 import { Button } from "react-bootstrap";
 
 function Bill() {
-  const { activityId = "None" } = useParams<{ activityId: string }>();
+  const { activityId } = useParams<{ activityId: string }>();
   const queryParams = new URLSearchParams(window.location.search);
   const userId = queryParams.get("userId") || "None";
 
@@ -38,8 +38,8 @@ function Bill() {
         </div>
         <div>
           <BillForm
-            activityId={activityId}
-            userId={userId}
+            activityId={parseInt(activityId)}
+            userId={parseInt(userId)}
             isUpdatingBill={!!updatingBill}
             updatingBill={updatingBill}
             isFormVisible={isFormVisible}

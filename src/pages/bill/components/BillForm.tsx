@@ -11,8 +11,8 @@ export const BillFormBody = ({
   isUpdatingBill = false,
   updatingBill = undefined,
 }: {
-  activityId: string;
-  userId: string;
+  activityId: number;
+  userId: number;
   onSuccess: () => void;
   isUpdatingBill?: boolean;
   updatingBill?: IBill;
@@ -154,13 +154,14 @@ export const BillFormBody = ({
                 type="checkbox"
                 label={participant.username}
                 value={participant.userId}
-                checked={formData.participants.includes(participant.userId)}
+                checked={formData.participants.includes(Number(participant.userId))}
                 onChange={(e) => {
                   const { value, checked } = e.target;
+                  const participantId = Number(value);
                   setFormData((prevFormData: IBillForm) => {
                     const updatedParticipants = checked
-                      ? [...prevFormData.participants, value]
-                      : prevFormData.participants.filter((id) => id !== value);
+                      ? [...prevFormData.participants, participantId]
+                      : prevFormData.participants.filter((id) => id !== participantId);
                     return {
                       ...prevFormData,
                       participants: updatedParticipants,
@@ -192,8 +193,8 @@ export const BillForm = ({
   isUpdatingBill = false,
   updatingBill = undefined,
 }: {
-  activityId: string;
-  userId: string;
+  activityId: number;
+  userId: number;
   isFormVisible: boolean;
   setIsFormVisible: (isVisible: boolean) => void;
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>;

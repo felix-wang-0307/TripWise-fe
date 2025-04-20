@@ -20,7 +20,7 @@ export async function createBill(bill: IBill): Promise<IResponse | undefined> {
   return BadResponse;
 }
 
-export async function getBillsByTravel(travelId: string): Promise<IBill[]> {
+export async function getBillsByTravel(travelId: number): Promise<IBill[]> {
   const res: IResponse = await fetch(`${BACKEND}/api/bills/travels/${travelId}`, {
     method: "GET",
   }).then((res) => res.json());
@@ -30,7 +30,7 @@ export async function getBillsByTravel(travelId: string): Promise<IBill[]> {
   return [];
 }
 
-export async function deleteBill(billId: string): Promise<IResponse> {
+export async function deleteBill(billId: number): Promise<IResponse> {
   const res: IResponse = await fetch(`${BACKEND}/api/bills/${billId}`, {
     method: "DELETE",
   }).then((res) => res.json());
@@ -40,7 +40,7 @@ export async function deleteBill(billId: string): Promise<IResponse> {
   return BadResponse;
 }
 
-export async function updateBill(billId: string, bill: IBill): Promise<IResponse> {
+export async function updateBill(billId: number, bill: IBill): Promise<IResponse> {
   const res: IResponse = await fetch(`${BACKEND}/api/bills/${billId}`, {
     method: "PUT",
     headers: {
@@ -54,7 +54,7 @@ export async function updateBill(billId: string, bill: IBill): Promise<IResponse
   return BadResponse;
 }
 
-export async function getBillById(billId: string): Promise<IBill | undefined> {
+export async function getBillById(billId: number): Promise<IBill | undefined> {
   const res: IResponse = await fetch(`${BACKEND}/api/bills/${billId}`, {
     method: "GET",
   }).then((res) => res.json());

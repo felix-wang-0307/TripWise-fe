@@ -41,7 +41,7 @@ export function isEqualNumber(a: number, b: number): boolean {
   return Math.abs(a - b) < 5 * Number.EPSILON;
 }
 
-export function getBillPortion(bill: IBill, userId: string): number {
+export function getBillPortion(bill: IBill, userId: number): number {
   // Check if paid by the user
   let portion = 0;
   if (bill.paidBy === userId) {
