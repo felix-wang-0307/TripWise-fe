@@ -10,6 +10,7 @@ import { organizeItinerary } from "./utils/organizeItinerary";
 import { findInsertionId } from "./utils/findInsertionId";
 import { useParams, useSearchParams } from "react-router-dom";
 import axios from 'axios';
+import { useAppContext } from "../../AppContext";
 
 interface TravelData {
   groupId: number;
@@ -18,13 +19,6 @@ interface TravelData {
   startDate: string;
   endDate: string;
   participants: number[]; // Assuming userId is a number
-}
-
-// Equivalent to IUser
-interface Member {
-  userId: string;
-  username: string;
-  role: string;
 }
 
 function Travel() {
@@ -37,7 +31,9 @@ function Travel() {
 
   const [travelDetail, setTravelList] = useState<TravelData | null>(null);
   const [itineraryList, setItineraryList] = useState<{ [date: string]: TravelItinerary[] }>({});
-  const [membersList, setMembersList] = useState<Member[]>([]);
+  const { groupMembers } = useAppContext();
+  const membersList = groupMembers;
+  // const [membersList, setMembersList] = useState<Member[]>([]);
   const [showAddDate, setShowAddDate] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [dateInputError, setDateInputError] = useState(false);
@@ -51,16 +47,16 @@ function Travel() {
         setTravelList(travelResponse.data.activity);
         // console.log("Travel Detail:", travelResponse.data.activity);
 
-        // groupId is the same as activityId
-        const groupId = travelResponse.data.activity.groupId;
+        // // groupId is the same as activityId
+        // const groupId = travelResponse.data.activity.groupId;
 
         // Fetch Itinerary
         const itineraryResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`);
         setItineraryList(organizeItinerary(itineraryResponse.data));
 
-        // Fetch Members
-        const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
-        setMembersList(groupResponse.data);
+        // // Fetch Members
+        // const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
+        // setMembersList(groupResponse.data);
 
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -70,7 +66,7 @@ function Travel() {
     };
 
     fetchData();
-  }, [activityId]); // Dependency array ensures this runs only once on mount and when TRAVEL_ID changes
+  }, [activityId, USER_ID]); // Dependency array ensures this runs only once on mount and when dependencies change
 
   const onDeleteTrip = async (date: string, itineraryId: string) => {
     try {
