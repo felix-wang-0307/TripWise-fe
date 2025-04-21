@@ -9,7 +9,6 @@ import {
 import { Alert, ListGroup } from "react-bootstrap";
 import { useAppContext } from "../../../AppContext";
 import { findUsernameById } from "../services/memberServices";
-import "bootstrap-icons/font/bootstrap-icons.css";
 // import styles from "../bill.module.css";
 
 const BillPortion = ({
