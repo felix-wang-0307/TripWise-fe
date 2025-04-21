@@ -1,0 +1,20 @@
+runtime: nodejs20
+
+env_variables:
+  NODE_ENV: 'production'
+
+handlers:
+  - url: /(.*\.(js|css|png|jpg|jpeg|gif|ico|svg))$
+    static_files: dist/\1
+    upload: dist/.*\.(js|css|png|jpg|jpeg|gif|ico|svg)$
+  
+  - url: /static/media/
+    static_dir: dist/static/media/
+    mime_type: application/font-woff2
+
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+
+  
+
