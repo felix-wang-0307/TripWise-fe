@@ -58,7 +58,10 @@ function Login() {
       if (response.status == 200) {
         setModalMessage(`Welcome back!!!  :) `);
         setlogin(true);
-        Cookies.set("authToken", data.token, { expires: 7, secure: true });
+        Cookies.set("authToken", data.token, { expires: 80000, secure: true });
+        localStorage.setItem("authToken", data.token);
+        console.log("Token set in cookies:", data.token);
+        console.log("Local storage token:", localStorage.getItem("authToken"));
       } else if (response.status == 401) {
         if (data.message == "Invalid email or password") {
           setModalMessage(`Wrong email or password :(  `);

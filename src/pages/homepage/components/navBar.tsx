@@ -10,7 +10,8 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
   const navigate = useNavigate();
-  const token = Cookies.get("authToken");
+  const token = Cookies.get("authToken") || localStorage.getItem("authToken");
+  console.log("token", token);
   const APIURL = import.meta.env.VITE_APIURL;
   const [newpassword, setnewpassword] = useState("");
   const [confirmpassword, setconfrimpw] = useState("");
@@ -47,7 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
   };
   function backtologin() {
     Cookies.remove("authToken");
-    //console.log("resetpw cookie still exist?", Cookies.get("authToken"));
+    console.log("resetpw cookie still exist?", Cookies.get("authToken"));
     setTimeout(() => navigate("/login"), 1500);
   }
   const senddpreq = async () => {
