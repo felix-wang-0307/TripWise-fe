@@ -288,7 +288,8 @@ const Navbar: React.FC<NavbarProps> = ({ onUserIdLoaded }) => {
           href="/"
           style={{ display: "flex", alignItems: "center", gap: "5px" }}
         >
-          <span style={{ fontSize: "30px", marginRight: "8px" }}>🏕️</span>
+          {/* <span style={{ fontSize: "30px", marginRight: "8px" }}>🏕️</span> */}
+          <img src="/tripwise.png" alt="logo" style={{ width: "40px", height: "40px" }} />
           <span
             style={{ fontSize: "22px", fontWeight: "bold", color: "#336296" }}
           >
