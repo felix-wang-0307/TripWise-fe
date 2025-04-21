@@ -15,13 +15,16 @@ export async function getAllDebtsInTravel(
   return [];
 }
 
-export async function getDebtByUserId(
+export async function getDebtsByUserId(
   userId: number,
   travelId: number = -1,
   // travelId is -1 means fetch all debts of the user
 ): Promise<IDebt[]> {
-  const res = await fetch(`${BACKEND}/api/bills/debts/users/${userId}`, {
+  const res = await fetch(`${BACKEND}/api/bills/debts`, {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   }).then((res) => res.json());
   if (isGoodResponse(res)) {
     if (travelId !== -1) {
@@ -37,7 +40,7 @@ export async function getDebtByUserId(
 export function calcUserBalanceOfDebts(
   debts: IDebt[],
   userId: number,
-): { totalDebt: number; totalCredit: number } {
+): number {
   let totalDebt = 0;
   let totalCredit = 0;
 
@@ -48,8 +51,9 @@ export function calcUserBalanceOfDebts(
       totalCredit += debt.amount;
     }
   }
-
-  return { totalDebt, totalCredit };
+  // Positive balance means the user is a creditor (is owed money)
+  // Negative balance means the user is a debtor (owes money)
+  return totalCredit - totalDebt;
 }
 
 export function calcSettlePlans(debts: IDebt[]): IDebtSettlePlan[] {
