@@ -43,7 +43,7 @@ function Travel() {
     const fetchData = async () => {
       try {
         // Fetch Travel Details
-        const travelResponse = await axios.get(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
+        const travelResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
         setTravelList(travelResponse.data.activity);
         // console.log("Travel Detail:", travelResponse.data.activity);
 
@@ -51,11 +51,11 @@ function Travel() {
         // const groupId = travelResponse.data.activity.groupId;
 
         // Fetch Itinerary
-        const itineraryResponse = await axios.get(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`);
+        const itineraryResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`);
         setItineraryList(organizeItinerary(itineraryResponse.data));
 
         // // Fetch Members
-        // const groupResponse = await axios.get(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
+        // const groupResponse = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${groupId}/members`);
         // setMembersList(groupResponse.data);
 
       } catch (error) {
@@ -73,7 +73,7 @@ function Travel() {
       // Call delete API
       // Extract numeric ID whether it's "16" or "itinerary_16"
       const numericId = itineraryId.toString().match(/\d+$/)?.[0];
-      await axios.delete(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries/${numericId}`);
+      await axios.delete(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries/${numericId}`);
 
       // Update local state
       const updatedItinerary = { ...itineraryList };
@@ -105,13 +105,13 @@ function Travel() {
         }
         // Update backend
         await axios.put(
-          `https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`,
+          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`,
           updatedTravel
         );
 
         // Re-fetch updated travel detail
         const refreshed = await axios.get(
-          `https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`
+          `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`
         );
         setTravelList(refreshed.data.activity);
       }
@@ -150,9 +150,9 @@ function Travel() {
           startDate: isBeforeStart ? date : travelDetail.startDate,
           endDate: isAfterEnd ? date : travelDetail.endDate,
         };
-        await axios.put(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
+        await axios.put(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}`, updatedTravel);
         // re-fetch updated travel detail
-        const refreshed = await axios.get(`https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
+        const refreshed = await axios.get(`http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/activities/${activityId}?userId=${USER_ID}`);
         setTravelList(refreshed.data.activity);
       }
 
@@ -179,7 +179,7 @@ function Travel() {
     try {
       // POST new itinerary
       const response = await axios.post(
-        `https://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`,
+        `http://tripwise-backend-env.eba-w2ypwqet.us-east-2.elasticbeanstalk.com/api/travels/${activityId}/itineraries`,
         trip
       );
 
