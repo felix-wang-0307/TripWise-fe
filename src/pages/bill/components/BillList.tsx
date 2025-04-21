@@ -24,7 +24,7 @@ const BillPortion = ({
     return <span></span>;
   }
   return (
-    <span style={{ color: portion > 0 ? "red" : "green" }}>
+    <span style={{ color: portion > 0 ? "red" : "green", fontStyle: "italic" }}>
       {portionText} {formatCurrency(Math.abs(portion), currency)}
     </span>
   );
@@ -71,7 +71,7 @@ const BillList = ({
     <ListGroup as="ul">
       {bills.map((bill) => {
         return (
-          <ListGroup.Item key={bill.billId} as="li" className="mb-3 border rounded">
+          <ListGroup.Item key={bill.expenseId} as="li" className="mb-3 border rounded">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <strong>{bill.description}</strong>
               <span className="text-muted">{formatDate(bill.expenseDate)}</span>
@@ -86,7 +86,7 @@ const BillList = ({
               </span>
               <span>
                 <BillPortion
-                  portion={getBillPortion(bill, userId)}
+                  portion={getBillPortion(bill, Number(userId))}
                   currency={bill.currency ?? "USD"}
                 />
               </span>

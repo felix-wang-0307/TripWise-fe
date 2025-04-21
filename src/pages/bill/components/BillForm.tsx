@@ -34,7 +34,7 @@ export const BillFormBody = ({
           amount: 0,
           currency: "USD",
           paidBy: userId,
-          participants: [],
+          participants: [userId],
           expenseDate: new Date().toISOString().split("T")[0],
           splitType: "equal",
         }
@@ -120,9 +120,7 @@ export const BillFormBody = ({
     }
   };
 
-  const handleAmountChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     const isValid = /^\d+(\.\d*)?$/.test(value);
     setTouched((prev) => ({ ...prev, amount: true }));
@@ -132,7 +130,7 @@ export const BillFormBody = ({
         if (decimalPart.length > 2) {
           value = value.slice(0, value.indexOf(".") + 3);
         }
-      } 
+      }
       setAmountDisplay(value);
       setFormData((prevFormData: IBillForm) => ({
         ...prevFormData,
@@ -148,7 +146,7 @@ export const BillFormBody = ({
         amount: "Amount must be a valid number.",
       }));
     }
-  }
+  };
 
   return (
     <Form onSubmit={handleSubmit} noValidate>
@@ -234,33 +232,67 @@ export const BillFormBody = ({
 
       <Row className="mb-3">
         <Col>
+          <Form.Group controlId="paidBy">
+            <Form.Label>Paid By:</Form.Label>
+            <Row>
+              {groupMembers.map((participant) => (
+                <Col xs={6} sm={4} md={3} key={participant.userId}>
+                  <Form.Check
+                    type="radio"
+                    name="paidBy"
+                    id={`paidBy-${participant.userId}`}
+                    value={participant.userId}
+                    checked={formData.paidBy === Number(participant.userId)}
+                    onChange={(e) => {
+                      setFormData((prevFormData: IBillForm) => ({
+                        ...prevFormData,
+                        paidBy: Number(e.target.value),
+                      }));
+                    }}
+                    label={participant.username}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row className="mb-3">
+        <Col>
           <Form.Group controlId="participants">
             <Form.Label>Split By:</Form.Label>
-            {groupMembers.map((participant) => (
-              <Form.Check
-                key={participant.userId}
-                type="checkbox"
-                label={participant.username}
-                value={participant.userId}
-                checked={formData.participants.includes(
-                  Number(participant.userId)
-                )}
-                onChange={(e) => {
-                  const id = Number(e.target.value);
-                  const { checked } = e.target;
-                  setTouched((prev) => ({ ...prev, participants: true }));
-                  setFormData((prevFormData: IBillForm) => {
-                    const updatedParticipants = checked
-                      ? [...prevFormData.participants, id]
-                      : prevFormData.participants.filter((pid) => pid !== id);
-                    return {
-                      ...prevFormData,
-                      participants: updatedParticipants,
-                    };
-                  });
-                }}
-              />
-            ))}
+            <Row>
+              {groupMembers.map((participant) => (
+                <Col xs={6} sm={4} md={3} key={participant.userId}>
+                  <Form.Check
+                    key={participant.userId}
+                    type="checkbox"
+                    label={participant.username}
+                    value={participant.userId}
+                    checked={formData.participants.includes(
+                      Number(participant.userId)
+                    )}
+                    onChange={(e) => {
+                      const id = Number(e.target.value);
+                      const { checked } = e.target;
+                      setTouched((prev) => ({ ...prev, participants: true }));
+                      setFormData((prevFormData: IBillForm) => {
+                        const updatedParticipants = checked
+                          ? [...prevFormData.participants, id]
+                          : prevFormData.participants.filter(
+                              (pid) => pid !== id
+                            );
+                        return {
+                          ...prevFormData,
+                          participants: updatedParticipants,
+                        };
+                      });
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
             {touched.participants && getFieldError("participants") && (
               <div className="text-danger mt-1">
                 {getFieldError("participants")}
