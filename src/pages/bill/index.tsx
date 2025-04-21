@@ -4,6 +4,7 @@ import BillForm from "./components/BillForm";
 import BillList from "./components/BillList";
 import { Button, Toast } from "react-bootstrap";
 import { deleteBill } from "./services/billServices";
+import BillSettlement from "./components/BillSettlement";
 
 function Bill() {
   const { activityId } = useParams<{ activityId: string }>();
@@ -54,7 +55,8 @@ function Bill() {
   return (
     <>
       <div className="container d-flex justify-content-center align-items-center mt-4">
-        <div className="w-100 w-md-50 p-3 border rounded shadow">
+        <div className="w-100 w-md-50 p-3">
+          <BillSettlement refreshKey={refreshKey}/>
           <BillList
             travelId={activityId}
             handleUpdateBill={handleUpdateBill}

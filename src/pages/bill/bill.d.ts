@@ -30,3 +30,18 @@ interface IBillSplit {
   userId: number;
   amount: number;
 }
+
+interface IDebt {
+  debtorId: number; // UserId of the debtor
+  creditorId: number; // UserId of the creditor
+  amount: number; // Amount owed
+  description?: string; // Description of the debt
+  expenseId?: number; // Unique identifier for the bill associated with the debt
+  travelId?: number; // Unique identifier for the travel associated with the debt
+}
+
+interface IDebtSettlePlan {
+  debtorId: number; // UserId of the debtor
+  creditorId: number; // UserId of the creditor
+  amount: number; // Amount to be settled
+}

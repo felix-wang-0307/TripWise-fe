@@ -1,4 +1,3 @@
-
 /* Format date to MM/DD */
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -9,7 +8,7 @@ export function formatDate(dateString: string): string {
 
 /* Format currency to '$1,234.56' */
 export function formatCurrency(amount: number, currency = "USD"): string {
-  return Intl.NumberFormat(currency === 'CNY' ? 'zh-CN' : 'en-US', {
+  return Intl.NumberFormat(currency === "CNY" ? "zh-CN" : "en-US", {
     style: "currency",
     currency: currency,
     currencyDisplay: "symbol",
@@ -35,9 +34,6 @@ export function isGoodResponse(response: IResponse | undefined): boolean {
     return false;
   }
   if (response.status && isBadCode(response.status)) {
-    return false;
-  }
-  if (response.message && response.message !== "OK") {
     return false;
   }
   if (response.error) {
@@ -78,5 +74,5 @@ export function getBillPortion(bill: IBill, userId: number): number {
   }
   // Positive portion means the user owes money
   // Negative portion means the user is owed money
-  return portion; 
+  return portion;
 }
