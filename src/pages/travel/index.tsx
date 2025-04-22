@@ -231,7 +231,7 @@ function Travel() {
         ))}
         <TravelButton className="me-2 mb-3 btn-sm">
           <a href="#newDate" className="d-flex text-decoration-none align-items-center justify-content-center" style={{ color: "inherit" }} >
-            <span className="material-icons">add</span>
+            <span className="material-icons" onClick={() => setShowAddDate(true)}>add</span>
           </a>
         </TravelButton>
       </div>

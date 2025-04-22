@@ -42,7 +42,18 @@ export function TravelsAndBill() {
 
   return (
     <AppProvider value={{ groupMembers, userId, activityId }}>
-      <div className="container d-flex justify-content-center align-items-center mt-4">
+      <div className="container d-flex justify-content-begin align-items-center mt-3">
+        <div
+          onClick={() => {
+            window.location.href = "/";
+          }}
+          className="align-self-start"
+          style={{ cursor: "pointer", color: "rgb(13, 100, 253)" }}
+        >
+          {"< Back"}
+        </div>
+      </div>
+      <div className="container d-flex justify-content-center align-items-center mt-2">
         <div className="w-100 w-md-50 p-3 rounded shadow">
           <Tabs
             id="travel-and-bill-tabs"
