@@ -65,6 +65,7 @@ This is the **front-end** repository for the **TripWise** web application.
 
 ### Bills
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/f134d9b5-71ac-48bd-bce1-ab2fc51436e6" />
+
 ### Profile Module
 <img width="280" alt="image" src="https://github.com/user-attachments/assets/cd953bdf-bf6a-463c-a6e6-6087b7c4e520" />
 
