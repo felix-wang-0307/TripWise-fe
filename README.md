@@ -31,8 +31,7 @@ This is the **front-end** repository for the **TripWise** web application.
 - **Modular file structure** for easy scaling and maintenance:
   - Each **module = one page/tab**
   - Structured as: `src/moduleName/` → main component + reusable subcomponents/hooks
-
-  <img width="1058" alt="Modular Structure Preview" src="https://github.com/user-attachments/assets/fe7cd7fb-2cf2-413d-9ac2-bd89609bd7e5" />
+  - ![structure](https://github.com/user-attachments/assets/fe7cd7fb-2cf2-413d-9ac2-bd89609bd7e5)
 
 ---
 
