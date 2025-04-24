@@ -55,3 +55,17 @@ This is the **front-end** repository for the **TripWise** web application.
 
 4. **Visit the app**
    Open your browser at [http://localhost:5173](http://localhost:5173)
+
+## 💡 Demos
+### HomePage
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/804afc68-49aa-4097-bf71-557531866d35" />
+
+### Travel & Itineraries
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/c13860c3-c844-49b2-bc5d-89a294db62e9" />
+
+### Bills
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/f134d9b5-71ac-48bd-bce1-ab2fc51436e6" />
+### Profile Module
+<img width="280" alt="image" src="https://github.com/user-attachments/assets/cd953bdf-bf6a-463c-a6e6-6087b7c4e520" />
+
+
