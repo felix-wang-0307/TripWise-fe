@@ -48,7 +48,11 @@ function SettlementPlan({
   );
 }
 
-export default function BillSettlement({ refreshKey }: { refreshKey?: number }) {
+export default function BillSettlement({
+  refreshKey,
+}: {
+  refreshKey?: number;
+}) {
   const { userId, activityId, groupMembers } = useAppContext();
   // const [settlePlans, setSettlePlans] = useState<IDebtSettlePlan[]>([]);
   const [allDebts, setAllDebts] = useState<IDebt[]>([]);
@@ -59,7 +63,6 @@ export default function BillSettlement({ refreshKey }: { refreshKey?: number }) 
     const fetchAllDebts = async () => {
       try {
         const debts = await getAllDebtsInTravel(activityId);
-        console.log("All debts:", debts);
         setAllDebts(debts);
       } catch (error) {
         console.error("Error fetching all debts:", error);
@@ -71,13 +74,11 @@ export default function BillSettlement({ refreshKey }: { refreshKey?: number }) 
 
   const userBalance = useMemo(() => {
     const balance = calcUserBalanceOfDebts(allDebts, Number(userId));
-    console.log("User balance:", balance);
     return balance;
   }, [allDebts, userId]);
 
   const settlePlans = useMemo(() => {
     const plans = calcSettlePlans(allDebts);
-    console.log("Settle plans:", plans);
     return plans;
   }, [allDebts]);
 
